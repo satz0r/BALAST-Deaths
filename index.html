@@ -421,7 +421,8 @@
         // Update statistics overview
         function updateStats() {
             const totalDeaths = filteredData.length;
-            const deadliestMob = d3.rollup(filteredData.filter(d => d.mob), v => v.length, d => d.mob);
+            const mobCounts = d3.rollup(filteredData.filter(d => d.mob), v => v.length, d => d.mob);
+            const deadliestMob = Array.from(mobCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || "N/A";
             const raidDeaths = filteredData.filter(d => d.isRaid).length;
             const avgLevel = d3.mean(filteredData.filter(d => d.level), d => d.level);
             const mostDeadlyLocation = d3.rollup(filteredData.filter(d => d.location), v => v.length, d => d.location);

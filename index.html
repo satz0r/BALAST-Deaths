@@ -421,7 +421,7 @@
         // Update statistics overview
         function updateStats() {
             const totalDeaths = filteredData.length;
-            const uniqueCharacters = new Set(filteredData.map(d => d.characterName)).size;
+            const deadliestMobs = new d3.rollup(filteredData.filter(d => d.mob), v => v.length, d => d.mob);
             const raidDeaths = filteredData.filter(d => d.isRaid).length;
             const avgLevel = d3.mean(filteredData.filter(d => d.level), d => d.level);
             const mostDeadlyLocation = d3.rollup(filteredData.filter(d => d.location), v => v.length, d => d.location);
@@ -433,8 +433,8 @@
                     <div class="value">${totalDeaths}</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Characters Lost</h3>
-                    <div class="value">${uniqueCharacters}</div>
+                    <h3>Deadliest Mob</h3>
+                    <div class="value">${deadliestMobs}</div>
                 </div>
                 <div class="stat-card">
                     <h3>Raid Deaths</h3>

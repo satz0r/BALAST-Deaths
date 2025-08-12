@@ -610,102 +610,111 @@
             .call(d3.axisBottom(x));
             g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
         }
-
         function createTimelineChart() {
             const margin = {top: 20, right: 20, bottom: 60, left: 40};
             const width = 800 - margin.left - margin.right;
             const height = 300 - margin.bottom - margin.top;
 
-            const timeData = d3.rollup(filteredData, v => v.length, d => d3.timeMonth(d.date));
-            const timeArray = Array.from(timeData, ([date, count]) => ({date, count}))
-            .sort((a, b) => a.date - b.date);
+    // Daily data for bars
+    const dailyData = d3.rollup(filteredData, v => v.length, d => d3.timeDay(d.date));
+    const dailyArray = Array.from(dailyData, ([date, count]) => ({date, count}))
+    .sort((a, b) => a.date - b.date);
 
-            const svg = d3.select("#timelineChart")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
+    // Monthly data for trend line
+    const monthlyData = d3.rollup(filteredData, v => v.length, d => d3.timeMonth(d.date));
+    const monthlyArray = Array.from(monthlyData, ([date, count]) => ({date, count}))
+    .sort((a, b) => a.date - b.date);
 
-            const g = svg.append("g")
-            .attr("transform", `translate(${margin.left},${margin.top})`);
+    const svg = d3.select("#timelineChart")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
 
-    // Scales
+    const g = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Scales - use the full date range from daily data
     const x = d3.scaleTime()
-    .domain(d3.extent(timeArray, d => d.date))
+    .domain(d3.extent(dailyArray, d => d.date))
     .range([0, width]);
     
+    // Scale based on the maximum between daily and monthly data
+    const maxDaily = d3.max(dailyArray, d => d.count) || 1;
+    const maxMonthly = d3.max(monthlyArray, d => d.count) || 1;
     const y = d3.scaleLinear()
-    .domain([0, d3.max(timeArray, d => d.count) || 1])
+    .domain([0, Math.max(maxDaily, maxMonthly)])
     .range([height, 0]);
 
-    // Calculate bar width based on time scale
-    const barWidth = width / timeArray.length * 0.8; // 80% of available space per bar
+    // Calculate bar width - make them narrow for daily data
+    const timeSpan = x.domain()[1] - x.domain()[0];
+    const barWidth = Math.max(1, width / dailyArray.length * 0.8);
 
-    // Add bars first (so they appear behind the line)
-    g.selectAll(".timeline-bar")
-    .data(timeArray)
+    // Add daily bars first (so they appear behind the line)
+    g.selectAll(".daily-bar")
+    .data(dailyArray)
     .enter().append("rect")
-    .attr("class", "timeline-bar")
+    .attr("class", "daily-bar")
     .attr("x", d => x(d.date) - barWidth/2)
     .attr("width", barWidth)
     .attr("y", d => y(d.count))
     .attr("height", d => height - y(d.count))
-        .attr("fill", "rgba(78, 205, 196, 0.3)") // Semi-transparent teal
-        .attr("stroke", "rgba(78, 205, 196, 0.8)")
-        .attr("stroke-width", 1)
+        .attr("fill", "rgba(255, 107, 107, 0.4)") // Semi-transparent red
+        .attr("stroke", "rgba(255, 107, 107, 0.8)")
+        .attr("stroke-width", 0.5)
         .on("mouseover", (event, d) => {
             // Highlight the bar on hover
             d3.select(event.target)
-            .attr("fill", "rgba(78, 205, 196, 0.6)");
+            .attr("fill", "rgba(255, 107, 107, 0.7)");
             
             tooltip.style("opacity", 1)
-            .html(`<strong>${d3.timeFormat("%B %Y")(d.date)}</strong><br/>Deaths: ${d.count}`)
+            .html(`<strong>${d3.timeFormat("%B %d, %Y")(d.date)}</strong><br/>Deaths: ${d.count}`)
             .style("left", (event.pageX + 10) + "px")
             .style("top", (event.pageY - 10) + "px");
         })
         .on("mouseout", (event, d) => {
             // Reset bar color
             d3.select(event.target)
-            .attr("fill", "rgba(78, 205, 196, 0.3)");
+            .attr("fill", "rgba(255, 107, 107, 0.4)");
             
             tooltip.style("opacity", 0);
         });
 
-    // Add the line (on top of bars)
+    // Add the monthly trend line (on top of bars)
     const line = d3.line()
     .x(d => x(d.date))
     .y(d => y(d.count))
     .curve(d3.curveMonotoneX);
 
     g.append("path")
-    .datum(timeArray)
+    .datum(monthlyArray)
     .attr("fill", "none")
     .attr("stroke", "#4ecdc4")
     .attr("stroke-width", 3)
     .attr("d", line);
 
-    // Add dots on the line
-    g.selectAll(".dot")
-    .data(timeArray)
+    // Add dots on the monthly trend line
+    g.selectAll(".monthly-dot")
+    .data(monthlyArray)
     .enter().append("circle")
-    .attr("class", "dot")
+    .attr("class", "monthly-dot")
     .attr("cx", d => x(d.date))
     .attr("cy", d => y(d.count))
-    .attr("r", 5)
-    .attr("fill", "#ff6b6b")
+    .attr("r", 6)
+    .attr("fill", "#4ecdc4")
     .attr("stroke", "#ffffff")
     .attr("stroke-width", 2)
     .on("mouseover", (event, d) => {
             // Make dot larger on hover
-            d3.select(event.target).attr("r", 7);
+            d3.select(event.target).attr("r", 8);
             
             tooltip.style("opacity", 1)
-            .html(`<strong>${d3.timeFormat("%B %Y")(d.date)}</strong><br/>Deaths: ${d.count}`)
+            .html(`<strong>Monthly Total - ${d3.timeFormat("%B %Y")(d.date)}</strong><br/>Deaths: ${d.count}`)
             .style("left", (event.pageX + 10) + "px")
             .style("top", (event.pageY - 10) + "px");
         })
     .on("mouseout", (event, d) => {
             // Reset dot size
-            d3.select(event.target).attr("r", 5);
+            d3.select(event.target).attr("r", 6);
             
             tooltip.style("opacity", 0);
         });
@@ -725,6 +734,8 @@
     .attr("class", "axis")
     .call(d3.axisLeft(y).tickFormat(d3.format("d")));
 }
+
+
 function createLocationChart() {
     const margin = {top: 20, right: 20, bottom: 80, left: 40};
     const width = 400 - margin.left - margin.right;

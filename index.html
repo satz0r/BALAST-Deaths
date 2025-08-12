@@ -316,9 +316,9 @@
         async function loadData() {
             try {
                 const { data: deaths, error } = await sb
-                    .from('guild_deaths')
-                    .select('*')
-                    .order('death_date', { ascending: true });
+                .from('guild_deaths')
+                .select('*')
+                .order('death_date', { ascending: true });
                 
                 if (error) throw error;
                 
@@ -350,14 +350,14 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('error').style.display = 'block';
                 document.getElementById('error').innerHTML = `
-                    <h3>Error Loading Data</h3>
-                    <p>Could not connect to the database. Please check:</p>
-                    <ul style="text-align: left; display: inline-block;">
-                        <li>Internet connection</li>
-                        <li>Database credentials</li>
-                        <li>Database permissions</li>
-                    </ul>
-                    <p><strong>Error:</strong> ${error.message}</p>
+                <h3>Error Loading Data</h3>
+                <p>Could not connect to the database. Please check:</p>
+                <ul style="text-align: left; display: inline-block;">
+                <li>Internet connection</li>
+                <li>Database credentials</li>
+                <li>Database permissions</li>
+                </ul>
+                <p><strong>Error:</strong> ${error.message}</p>
                 `;
             }
         }
@@ -421,37 +421,62 @@
         // Update statistics overview
         function updateStats() {
             const totalDeaths = filteredData.length;
-            const mobCounts = d3.rollup(filteredData.filter(d => d.mob), v => v.length, d => d.mob);
-            const deadliestMob = Array.from(mobCounts).sort((a,b) => b[1]-a[1])[0]?.[0] || "N/A";
-            const raidDeaths = filteredData.filter(d => d.isRaid).length;
-            const avgLevel = d3.mean(filteredData.filter(d => d.level), d => d.level);
-            const mostDeadlyLocation = d3.rollup(filteredData.filter(d => d.location), v => v.length, d => d.location);
-            const topLocation = mostDeadlyLocation.size > 0 ? [...mostDeadlyLocation.entries()].sort((a, b) => b[1] - a[1])[0] : null;
 
-            const statsHtml = `
-                <div class="stat-card">
-                    <h3>Total Deaths</h3>
-                    <div class="value">${totalDeaths}</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Deadliest Mob</h3>
-                    <div class="value">${deadliestMob}</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Raid Deaths</h3>
-                    <div class="value">${raidDeaths}</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Avg Death Level</h3>
-                    <div class="value">${avgLevel ? Math.round(avgLevel) : 'N/A'}</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Deadliest Zone</h3>
-                    <div class="value" style="font-size: 1.2em;">${topLocation ? topLocation[0] : 'N/A'}</div>
-                </div>
-            `;
-            d3.select("#stats-overview").html(statsHtml);
-        }
+    // Deadliest Mob
+    const mobCounts = d3.rollup(
+        filteredData.filter(d => d.mob),
+        v => v.length,
+        d => d.mob
+        );
+    const deadliestMob = Array.from(mobCounts)
+    .sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+
+    // Raid Deaths
+    const raidDeaths = filteredData.filter(d => d.isRaid).length;
+
+    // Days Without Death
+    let daysWithoutDeath = "0";
+    if (filteredData.length) {
+        const lastDeath = new Date(d3.max(filteredData, d => d.date));
+        const today = new Date();
+        daysWithoutDeath = Math.floor((today - lastDeath) / (1000 * 60 * 60 * 24));
+    }
+
+    // Deadliest Zone (excluding "Unknown")
+    const zoneCounts = d3.rollup(
+        filteredData.filter(d => d.location && d.location.toLowerCase() !== "unknown"),
+        v => v.length,
+        d => d.location
+        );
+    const deadliestZone = Array.from(zoneCounts)
+    .sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
+
+    // Build Stats HTML
+    const statsHtml = `
+    <div class="stat-card">
+    <h3>Total Deaths</h3>
+    <div class="value">${totalDeaths}</div>
+    </div>
+    <div class="stat-card">
+    <h3>Deadliest Mob</h3>
+    <div class="value">${deadliestMob}</div>
+    </div>
+    <div class="stat-card">
+    <h3>Raid Deaths</h3>
+    <div class="value">${raidDeaths}</div>
+    </div>
+    <div class="stat-card">
+    <h3>Days Without Death</h3>
+    <div class="value">${daysWithoutDeath}</div>
+    </div>
+    <div class="stat-card">
+    <h3>Deadliest Zone</h3>
+    <div class="value" style="font-size: 1.2em;">${deadliestZone}</div>
+    </div>
+    `;
+    d3.select("#stats-overview").html(statsHtml);
+}
+
 
         // Create all charts (same functions as before but using live data)
         function createCharts() {
@@ -480,268 +505,268 @@
 
             const classCounts = d3.rollup(filteredData.filter(d => d.class), v => v.length, d => d.class);
             const classData = Array.from(classCounts, ([key, value]) => ({class: key, count: value}))
-                .sort((a, b) => b.count - a.count);
+            .sort((a, b) => b.count - a.count);
 
             const svg = d3.select("#classChart")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom);
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
 
             const g = svg.append("g")
-                .attr("transform", `translate(${margin.left},${margin.top})`);
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
             const x = d3.scaleBand()
-                .domain(classData.map(d => d.class))
-                .range([0, width])
-                .padding(0.1);
+            .domain(classData.map(d => d.class))
+            .range([0, width])
+            .padding(0.1);
 
             const y = d3.scaleLinear()
-                .domain([0, d3.max(classData, d => d.count)])
-                .range([height, 0]);
+            .domain([0, d3.max(classData, d => d.count)])
+            .range([height, 0]);
 
             g.selectAll(".bar")
-                .data(classData)
-                .enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", d => x(d.class))
-                .attr("width", x.bandwidth())
-                .attr("y", d => y(d.count))
-                .attr("height", d => height - y(d.count))
-                .attr("fill", d => classColors[d.class] || "#666")
-                .on("mouseover", function(event, d) {
-                    tooltip.style("opacity", 1)
-                        .html(`<strong>${d.class}</strong><br/>Deaths: ${d.count}`)
-                        .style("left", (event.pageX + 10) + "px")
-                        .style("top", (event.pageY - 10) + "px");
-                })
-                .on("mouseout", function() {
-                    tooltip.style("opacity", 0);
-                });
+            .data(classData)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.class))
+            .attr("width", x.bandwidth())
+            .attr("y", d => y(d.count))
+            .attr("height", d => height - y(d.count))
+            .attr("fill", d => classColors[d.class] || "#666")
+            .on("mouseover", function(event, d) {
+                tooltip.style("opacity", 1)
+                .html(`<strong>${d.class}</strong><br/>Deaths: ${d.count}`)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mouseout", function() {
+                tooltip.style("opacity", 0);
+            });
 
             g.append("g")
-                .attr("class", "axis")
-                .attr("transform", `translate(0,${height})`)
-                .call(d3.axisBottom(x))
-                .selectAll("text")
-                .style("text-anchor", "end")
-                .attr("dx", "-.8em")
-                .attr("dy", ".15em")
-                .attr("transform", "rotate(-45)");
+            .attr("class", "axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-45)");
 
             g.append("g")
-                .attr("class", "axis")
-                .call(d3.axisLeft(y));
+            .attr("class", "axis")
+            .call(d3.axisLeft(y));
         }
 
         // [Additional chart functions would follow the same pattern]
         // For brevity, I'll include the basic structure - let me know if you need all chart functions
 
         function createLevelChart() {
-    const margin = {top: 20, right: 20, bottom: 40, left: 40};
-    const width = 400 - margin.left - margin.right;
-    const height = 300 - margin.bottom - margin.top;
+            const margin = {top: 20, right: 20, bottom: 40, left: 40};
+            const width = 400 - margin.left - margin.right;
+            const height = 300 - margin.bottom - margin.top;
 
-    const levelData = filteredData.filter(d => d.level);
-    const ranges = [
-        {range: "1-20", count: levelData.filter(d => d.level >= 1 && d.level <= 20).length},
-        {range: "21-40", count: levelData.filter(d => d.level >= 21 && d.level <= 40).length},
-        {range: "41-59", count: levelData.filter(d => d.level >= 41 && d.level <= 59).length},
-        {range: "60", count: levelData.filter(d => d.level === 60).length}
-    ];
+            const levelData = filteredData.filter(d => d.level);
+            const ranges = [
+            {range: "1-20", count: levelData.filter(d => d.level >= 1 && d.level <= 20).length},
+            {range: "21-40", count: levelData.filter(d => d.level >= 21 && d.level <= 40).length},
+            {range: "41-59", count: levelData.filter(d => d.level >= 41 && d.level <= 59).length},
+            {range: "60", count: levelData.filter(d => d.level === 60).length}
+            ];
 
-    const svg = d3.select("#levelChart")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
+            const svg = d3.select("#levelChart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
 
-    const g = svg.append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+            const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleBand().domain(ranges.map(d => d.range))
-        .range([0, width]).padding(0.1);
-    const y = d3.scaleLinear().domain([0, d3.max(ranges, d => d.count) || 1])
-        .range([height, 0]);
+            const x = d3.scaleBand().domain(ranges.map(d => d.range))
+            .range([0, width]).padding(0.1);
+            const y = d3.scaleLinear().domain([0, d3.max(ranges, d => d.count) || 1])
+            .range([height, 0]);
 
-    g.selectAll(".bar")
-        .data(ranges)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", d => x(d.range))
-        .attr("width", x.bandwidth())
-        .attr("y", d => y(d.count))
-        .attr("height", d => height - y(d.count))
-        .attr("fill", d => levelRangeColors[d.range])
-        .on("mouseover", (event, d) => {
-            tooltip.style("opacity", 1)
+            g.selectAll(".bar")
+            .data(ranges)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.range))
+            .attr("width", x.bandwidth())
+            .attr("y", d => y(d.count))
+            .attr("height", d => height - y(d.count))
+            .attr("fill", d => levelRangeColors[d.range])
+            .on("mouseover", (event, d) => {
+                tooltip.style("opacity", 1)
                 .html(`<strong>${d.range}</strong><br/>Deaths: ${d.count}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 10) + "px");
-        })
-        .on("mouseout", () => tooltip.style("opacity", 0));
+            })
+            .on("mouseout", () => tooltip.style("opacity", 0));
 
-    g.append("g").attr("class", "axis")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x));
-    g.append("g").attr("class", "axis").call(d3.axisLeft(y));
-}
+            g.append("g").attr("class", "axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x));
+            g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+        }
 
-function createTimelineChart() {
-    const margin = {top: 20, right: 20, bottom: 60, left: 40};
-    const width = 800 - margin.left - margin.right;
-    const height = 300 - margin.bottom - margin.top;
+        function createTimelineChart() {
+            const margin = {top: 20, right: 20, bottom: 60, left: 40};
+            const width = 800 - margin.left - margin.right;
+            const height = 300 - margin.bottom - margin.top;
 
-    const timeData = d3.rollup(filteredData, v => v.length, d => d3.timeMonth(d.date));
-    const timeArray = Array.from(timeData, ([date, count]) => ({date, count}))
-        .sort((a, b) => a.date - b.date);
+            const timeData = d3.rollup(filteredData, v => v.length, d => d3.timeMonth(d.date));
+            const timeArray = Array.from(timeData, ([date, count]) => ({date, count}))
+            .sort((a, b) => a.date - b.date);
 
-    const svg = d3.select("#timelineChart")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
+            const svg = d3.select("#timelineChart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
 
-    const g = svg.append("g")
-        .attr("transform", `translate(${margin.left},${margin.top})`);
+            const g = svg.append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleTime()
-        .domain(d3.extent(timeArray, d => d.date))
-        .range([0, width]);
-    const y = d3.scaleLinear()
-        .domain([0, d3.max(timeArray, d => d.count) || 1])
-        .range([height, 0]);
+            const x = d3.scaleTime()
+            .domain(d3.extent(timeArray, d => d.date))
+            .range([0, width]);
+            const y = d3.scaleLinear()
+            .domain([0, d3.max(timeArray, d => d.count) || 1])
+            .range([height, 0]);
 
-    const line = d3.line()
-        .x(d => x(d.date))
-        .y(d => y(d.count))
-        .curve(d3.curveMonotoneX);
+            const line = d3.line()
+            .x(d => x(d.date))
+            .y(d => y(d.count))
+            .curve(d3.curveMonotoneX);
 
-    g.append("path")
-        .datum(timeArray)
-        .attr("fill", "none")
-        .attr("stroke", "#4ecdc4")
-        .attr("stroke-width", 3)
-        .attr("d", line);
+            g.append("path")
+            .datum(timeArray)
+            .attr("fill", "none")
+            .attr("stroke", "#4ecdc4")
+            .attr("stroke-width", 3)
+            .attr("d", line);
 
-    g.selectAll(".dot")
-        .data(timeArray)
-        .enter().append("circle")
-        .attr("class", "dot")
-        .attr("cx", d => x(d.date))
-        .attr("cy", d => y(d.count))
-        .attr("r", 5)
-        .attr("fill", "#ff6b6b")
-        .on("mouseover", (event, d) => {
-            tooltip.style("opacity", 1)
+            g.selectAll(".dot")
+            .data(timeArray)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("cx", d => x(d.date))
+            .attr("cy", d => y(d.count))
+            .attr("r", 5)
+            .attr("fill", "#ff6b6b")
+            .on("mouseover", (event, d) => {
+                tooltip.style("opacity", 1)
                 .html(`<strong>${d3.timeFormat("%B %Y")(d.date)}</strong><br/>Deaths: ${d.count}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 10) + "px");
-        })
-        .on("mouseout", () => tooltip.style("opacity", 0));
+            })
+            .on("mouseout", () => tooltip.style("opacity", 0));
 
-    g.append("g").attr("class", "axis")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%b %Y")))
-        .selectAll("text").style("text-anchor", "end")
-        .attr("dx", "-.8em").attr("dy", ".15em")
-        .attr("transform", "rotate(-45)");
-    g.append("g").attr("class", "axis").call(d3.axisLeft(y));
-}
+            g.append("g").attr("class", "axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%b %Y")))
+            .selectAll("text").style("text-anchor", "end")
+            .attr("dx", "-.8em").attr("dy", ".15em")
+            .attr("transform", "rotate(-45)");
+            g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+        }
 
-function createLocationChart() {
-    const margin = {top: 20, right: 20, bottom: 80, left: 40};
-    const width = 400 - margin.left - margin.right;
-    const height = 300 - margin.bottom - margin.top;
+        function createLocationChart() {
+            const margin = {top: 20, right: 20, bottom: 80, left: 40};
+            const width = 400 - margin.left - margin.right;
+            const height = 300 - margin.bottom - margin.top;
 
-    const locationCounts = d3.rollup(filteredData.filter(d => d.location), v => v.length, d => d.location);
-    const locationData = Array.from(locationCounts, ([loc, count]) => ({loc, count}))
-        .sort((a, b) => b.count - a.count).slice(0, 10);
+            const locationCounts = d3.rollup(filteredData.filter(d => d.location), v => v.length, d => d.location);
+            const locationData = Array.from(locationCounts, ([loc, count]) => ({loc, count}))
+            .sort((a, b) => b.count - a.count).slice(0, 10);
 
-    const svg = d3.select("#locationChart")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
+            const svg = d3.select("#locationChart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
 
-    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleBand().domain(locationData.map(d => d.loc))
-        .range([0, width]).padding(0.1);
-    const y = d3.scaleLinear().domain([0, d3.max(locationData, d => d.count) || 1])
-        .range([height, 0]);
+            const x = d3.scaleBand().domain(locationData.map(d => d.loc))
+            .range([0, width]).padding(0.1);
+            const y = d3.scaleLinear().domain([0, d3.max(locationData, d => d.count) || 1])
+            .range([height, 0]);
 
-    g.selectAll(".bar")
-        .data(locationData)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", d => x(d.loc))
-        .attr("width", x.bandwidth())
-        .attr("y", d => y(d.count))
-        .attr("height", d => height - y(d.count))
-        .attr("fill", "#45b7d1")
-        .on("mouseover", (event, d) => {
-            tooltip.style("opacity", 1)
+            g.selectAll(".bar")
+            .data(locationData)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.loc))
+            .attr("width", x.bandwidth())
+            .attr("y", d => y(d.count))
+            .attr("height", d => height - y(d.count))
+            .attr("fill", "#45b7d1")
+            .on("mouseover", (event, d) => {
+                tooltip.style("opacity", 1)
                 .html(`<strong>${d.loc}</strong><br/>Deaths: ${d.count}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 10) + "px");
-        })
-        .on("mouseout", () => tooltip.style("opacity", 0));
+            })
+            .on("mouseout", () => tooltip.style("opacity", 0));
 
-    g.append("g").attr("class", "axis")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x))
-        .selectAll("text").style("text-anchor", "end")
-        .attr("dx", "-.8em").attr("dy", ".15em")
-        .attr("transform", "rotate(-45)");
-    g.append("g").attr("class", "axis").call(d3.axisLeft(y));
-}
+            g.append("g").attr("class", "axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x))
+            .selectAll("text").style("text-anchor", "end")
+            .attr("dx", "-.8em").attr("dy", ".15em")
+            .attr("transform", "rotate(-45)");
+            g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+        }
 
-function createMobChart() {
-    const margin = {top: 20, right: 20, bottom: 80, left: 40};
-    const width = 400 - margin.left - margin.right;
-    const height = 300 - margin.bottom - margin.top;
+        function createMobChart() {
+            const margin = {top: 20, right: 20, bottom: 80, left: 40};
+            const width = 400 - margin.left - margin.right;
+            const height = 300 - margin.bottom - margin.top;
 
-    const mobCounts = d3.rollup(filteredData.filter(d => d.mob), v => v.length, d => d.mob);
-    const mobData = Array.from(mobCounts, ([mob, count]) => ({mob, count}))
-        .sort((a, b) => b.count - a.count).slice(0, 10);
+            const mobCounts = d3.rollup(filteredData.filter(d => d.mob), v => v.length, d => d.mob);
+            const mobData = Array.from(mobCounts, ([mob, count]) => ({mob, count}))
+            .sort((a, b) => b.count - a.count).slice(0, 10);
 
-    const svg = d3.select("#mobChart")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom);
+            const svg = d3.select("#mobChart")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
 
-    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-    const x = d3.scaleBand().domain(mobData.map(d => d.mob))
-        .range([0, width]).padding(0.1);
-    const y = d3.scaleLinear().domain([0, d3.max(mobData, d => d.count) || 1])
-        .range([height, 0]);
+            const x = d3.scaleBand().domain(mobData.map(d => d.mob))
+            .range([0, width]).padding(0.1);
+            const y = d3.scaleLinear().domain([0, d3.max(mobData, d => d.count) || 1])
+            .range([height, 0]);
 
-    g.selectAll(".bar")
-        .data(mobData)
-        .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", d => x(d.mob))
-        .attr("width", x.bandwidth())
-        .attr("y", d => y(d.count))
-        .attr("height", d => height - y(d.count))
-        .attr("fill", "#ff6b6b")
-        .on("mouseover", (event, d) => {
-            tooltip.style("opacity", 1)
+            g.selectAll(".bar")
+            .data(mobData)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", d => x(d.mob))
+            .attr("width", x.bandwidth())
+            .attr("y", d => y(d.count))
+            .attr("height", d => height - y(d.count))
+            .attr("fill", "#ff6b6b")
+            .on("mouseover", (event, d) => {
+                tooltip.style("opacity", 1)
                 .html(`<strong>${d.mob}</strong><br/>Kills: ${d.count}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 10) + "px");
-        })
-        .on("mouseout", () => tooltip.style("opacity", 0));
+            })
+            .on("mouseout", () => tooltip.style("opacity", 0));
 
-    g.append("g").attr("class", "axis")
-        .attr("transform", `translate(0,${height})`)
-        .call(d3.axisBottom(x))
-        .selectAll("text").style("text-anchor", "end")
-        .attr("dx", "-.8em").attr("dy", ".15em")
-        .attr("transform", "rotate(-45)");
-    g.append("g").attr("class", "axis").call(d3.axisLeft(y));
-}
+            g.append("g").attr("class", "axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(d3.axisBottom(x))
+            .selectAll("text").style("text-anchor", "end")
+            .attr("dx", "-.8em").attr("dy", ".15em")
+            .attr("transform", "rotate(-45)");
+            g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+        }
 
 // Initialize
 document.addEventListener('DOMContentLoaded', loadData);
-    </script>
+</script>
 </body>
 </html>

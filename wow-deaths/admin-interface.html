@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guild Deaths Admin Panel</title>
+    <script src="https://esm.sh/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+        
+        .admin-panel {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 5px;
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+        
+        input, select, textarea {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 14px;
+        }
+        
+        input::placeholder, textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        
+        button:hover {
+            opacity: 0.8;
+        }
+        
+        .deaths-list {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .death-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .death-info {
+            flex-grow: 1;
+        }
+        
+        .death-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .edit-btn, .delete-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .delete-btn {
+            background: #ff4757;
+        }
+        
+        .edit-btn {
+            background: #2ed573;
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .success {
+            background: rgba(46, 213, 115, 0.3);
+            border: 1px solid #2ed573;
+        }
+        
+        .error {
+            background: rgba(255, 71, 87, 0.3);
+            border: 1px solid #ff4757;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-panel">
+        <div class="header">
+            <h1>🛡️ Guild Deaths Admin Panel</h1>
+            <p>Manage and update death records</p>
+        </div>
+        
+        <div id="message" class="message hidden"></div>
+        
+        <div class="form-section">
+            <h2>Add New Death</h2>
+            <form id="deathForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="characterName">Character Name *</label>
+                        <input type="text" id="characterName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="class">Class *</label>
+                        <select id="class" required>
+                            <option value="">Select Class</option>
+                            <option value="Warrior">Warrior</option>
+                            <option value="Paladin">Paladin</option>
+                            <option value="Hunter">Hunter</option>
+                            <option value="Rogue">Rogue</option>
+                            <option value="Priest">Priest</option>
+                            <option value="Mage">Mage</option>
+                            <option value="Warlock">Warlock</option>
+                            <option value="Druid">Druid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="level">Level</label>
+                        <input type="number" id="level" min="1" max="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="deathDate">Death Date *</label>
+                        <input type="date" id="deathDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="zone">Zone/Location</label>
+                        <input type="text" id="zone" placeholder="e.g., Molten Core, Westfall">
+                    </div>
+                    <div class="form-group">
+                        <label for="specificLocation">Specific Location</label>
+                        <input type="text" id="specificLocation" placeholder="e.g., Southwind Village">
+                    </div>
+                    <div class="form-group">
+                        <label for="mob">Mob/Cause</label>
+                        <input type="text" id="mob" placeholder="e.g., Ragnaros, Fall Damage">
+                    </div>
+                    <div class="form-group">
+                        <label for="deathCause">Death Cause</label>
+                        <select id="deathCause">
+                            <option value="">Other</option>
+                            <option value="DC">Disconnect</option>
+                            <option value="Fall Damage">Fall Damage</option>
+                            <option value="Drowning">Drowning</option>
+                            <option value="AFK">AFK</option>
+                            <option value="Fatigue">Fatigue</option>
+                            <option value="Lava">Lava</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isRaid"> Raid Death
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="videoLink">Video Link</label>
+                        <input type="url" id="videoLink" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="3" placeholder="Additional details..."></textarea>
+                </div>
+                <button type="submit">Add Death Record</button>
+            </form>
+        </div>
+        
+        <div class="deaths-list">
+            <h2>Recent Deaths</h2>
+            <div id="deathsList">
+                Loading deaths...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Replace with your Supabase credentials
+        const SUPABASE_URL = 'https://ctqnpltlpkmlvbgdqrzu.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0cW5wbHRscGttbHZiZ2Rxcnp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ5MTA3MDEsImV4cCI6MjA3MDQ4NjcwMX0.SplNA1N6XDpGXHSRP6ChFHzmeKkaRD7ceye10JZCfNw';
+        
+        const { createClient } = supabase;
+        const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecentDeaths();
+            
+            // Set today's date as default
+            document.getElementById('deathDate').valueAsDate = new Date();
+            
+            // Form submission
+            document.getElementById('deathForm').addEventListener('submit', handleFormSubmit);
+        });
+        
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            const formData = {
+                character_name: document.getElementById('characterName').value,
+                class: document.getElementById('class').value,
+                level: parseInt(document.getElementById('level').value) || null,
+                death_date: document.getElementById('deathDate').value,
+                zone: document.getElementById('zone').value || null,
+                specific_location: document.getElementById('specificLocation').value || null,
+                mob: document.getElementById('mob').value || null,
+                death_cause: document.getElementById('deathCause').value || null,
+                is_raid: document.getElementById('isRaid').checked,
+                video_link: document.getElementById('videoLink').value || null,
+                notes: document.getElementById('notes').value || null
+            };
+            
+            try {
+                const { data, error } = await sb
+                    .from('guild_deaths')
+                    .insert([formData]);
+                
+                if (error) throw error;
+                
+                showMessage('Death record added successfully!', 'success');
+                document.getElementById('deathForm').reset();
+                document.getElementById('deathDate').valueAsDate = new Date();
+                loadRecentDeaths();
+                
+            } catch (error) {
+                showMessage(`Error: ${error.message}`, 'error');
+                console.error('Error adding death:', error);
+            }
+        }
+        
+        async function loadRecentDeaths() {
+            try {
+                const { data, error } = await sb
+                    .from('guild_deaths')
+                    .select('*')
+                    .order('death_date', { ascending: false })
+                    .limit(20);
+                
+                if (error) throw error;
+                
+                renderDeathsList(data);
+                
+            } catch (error) {
+                document.getElementById('deathsList').innerHTML = 
+                    `<p style="color: #ff4757;">Error loading deaths: ${error.message}</p>`;
+            }
+        }
+        
+        function renderDeathsList(deaths) {
+            const container = document.getElementById('deathsList');
+            
+            if (!deaths || deaths.length === 0) {
+                container.innerHTML = '<p>No deaths recorded yet.</p>';
+                return;
+            }
+            
+            container.innerHTML = deaths.map(death => `
+                <div class="death-item">
+                    <div class="death-info">
+                        <strong>${death.character_name}</strong> 
+                        (${death.class || 'Unknown'} ${death.level || '?'})
+                        <br>
+                        <small>
+                            ${formatDate(death.death_date)} - 
+                            ${death.zone || 'Unknown location'}
+                            ${death.mob ? ` - ${death.mob}` : ''}
+                            ${death.is_raid ? ' [RAID]' : ''}
+                        </small>
+                    </div>
+                    <div class="death-actions">
+                        <button class="edit-btn" onclick="editDeath(${death.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteDeath(${death.id}, '${death.character_name}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function deleteDeath(id, characterName) {
+            if (!confirm(`Are you sure you want to delete ${characterName}'s death record?`)) {
+                return;
+            }
+            
+            try {
+                const { error } = await sb
+                    .from('guild_deaths')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) throw error;
+                
+                showMessage('Death record deleted successfully!', 'success');
+                loadRecentDeaths();
+                
+            } catch (error) {
+                showMessage(`Error deleting record: ${error.message}`, 'error');
+            }
+        }
+        
+        function editDeath(id) {
+            // For simplicity, you could populate the form with existing data
+            // This would require fetching the specific death record and filling the form
+            showMessage('Edit functionality - populate form with existing data', 'success');
+        }
+        
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type}`;
+            messageEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                messageEl.classList.add('hidden');
+            }, 5000);
+        }
+        
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString();
+        }
+    </script>
+</body>
+</html>

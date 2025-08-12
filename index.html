@@ -538,6 +538,7 @@
                 .html(`<strong>${d.class}</strong><br/>Deaths: ${d.count}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 10) + "px");
+
             })
             .on("mouseout", function() {
                 tooltip.style("opacity", 0);
@@ -555,7 +556,7 @@
 
             g.append("g")
             .attr("class", "axis")
-            .call(d3.axisLeft(y));
+            .call(d3.axisLeft(y).tickFormat(d3.format("d")));
         }
 
         // [Additional chart functions would follow the same pattern]
@@ -607,7 +608,7 @@
             g.append("g").attr("class", "axis")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x));
-            g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+            g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
         }
 
         function createTimelineChart() {
@@ -668,7 +669,7 @@
             .selectAll("text").style("text-anchor", "end")
             .attr("dx", "-.8em").attr("dy", ".15em")
             .attr("transform", "rotate(-45)");
-            g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+            g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
         }
 
         function createLocationChart() {
@@ -715,7 +716,7 @@
             .selectAll("text").style("text-anchor", "end")
             .attr("dx", "-.8em").attr("dy", ".15em")
             .attr("transform", "rotate(-45)");
-            g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+            g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
         }
 
         function createMobChart() {
@@ -762,7 +763,7 @@
             .selectAll("text").style("text-anchor", "end")
             .attr("dx", "-.8em").attr("dy", ".15em")
             .attr("transform", "rotate(-45)");
-            g.append("g").attr("class", "axis").call(d3.axisLeft(y));
+            g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
         }
 
 // Initialize

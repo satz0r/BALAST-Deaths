@@ -628,143 +628,196 @@
             const g = svg.append("g")
             .attr("transform", `translate(${margin.left},${margin.top})`);
 
-            const x = d3.scaleTime()
-            .domain(d3.extent(timeArray, d => d.date))
-            .range([0, width]);
-            const y = d3.scaleLinear()
-            .domain([0, d3.max(timeArray, d => d.count) || 1])
-            .range([height, 0]);
+    // Scales
+    const x = d3.scaleTime()
+    .domain(d3.extent(timeArray, d => d.date))
+    .range([0, width]);
+    
+    const y = d3.scaleLinear()
+    .domain([0, d3.max(timeArray, d => d.count) || 1])
+    .range([height, 0]);
 
-            const line = d3.line()
-            .x(d => x(d.date))
-            .y(d => y(d.count))
-            .curve(d3.curveMonotoneX);
+    // Calculate bar width based on time scale
+    const barWidth = width / timeArray.length * 0.8; // 80% of available space per bar
 
-            g.append("path")
-            .datum(timeArray)
-            .attr("fill", "none")
-            .attr("stroke", "#4ecdc4")
-            .attr("stroke-width", 3)
-            .attr("d", line);
+    // Add bars first (so they appear behind the line)
+    g.selectAll(".timeline-bar")
+    .data(timeArray)
+    .enter().append("rect")
+    .attr("class", "timeline-bar")
+    .attr("x", d => x(d.date) - barWidth/2)
+    .attr("width", barWidth)
+    .attr("y", d => y(d.count))
+    .attr("height", d => height - y(d.count))
+        .attr("fill", "rgba(78, 205, 196, 0.3)") // Semi-transparent teal
+        .attr("stroke", "rgba(78, 205, 196, 0.8)")
+        .attr("stroke-width", 1)
+        .on("mouseover", (event, d) => {
+            // Highlight the bar on hover
+            d3.select(event.target)
+            .attr("fill", "rgba(78, 205, 196, 0.6)");
+            
+            tooltip.style("opacity", 1)
+            .html(`<strong>${d3.timeFormat("%B %Y")(d.date)}</strong><br/>Deaths: ${d.count}`)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px");
+        })
+        .on("mouseout", (event, d) => {
+            // Reset bar color
+            d3.select(event.target)
+            .attr("fill", "rgba(78, 205, 196, 0.3)");
+            
+            tooltip.style("opacity", 0);
+        });
 
-            g.selectAll(".dot")
-            .data(timeArray)
-            .enter().append("circle")
-            .attr("class", "dot")
-            .attr("cx", d => x(d.date))
-            .attr("cy", d => y(d.count))
-            .attr("r", 5)
-            .attr("fill", "#ff6b6b")
-            .on("mouseover", (event, d) => {
-                tooltip.style("opacity", 1)
-                .html(`<strong>${d3.timeFormat("%B %Y")(d.date)}</strong><br/>Deaths: ${d.count}`)
-                .style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 10) + "px");
-            })
-            .on("mouseout", () => tooltip.style("opacity", 0));
+    // Add the line (on top of bars)
+    const line = d3.line()
+    .x(d => x(d.date))
+    .y(d => y(d.count))
+    .curve(d3.curveMonotoneX);
 
-            g.append("g").attr("class", "axis")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%b %Y")))
-            .selectAll("text").style("text-anchor", "end")
-            .attr("dx", "-.8em").attr("dy", ".15em")
-            .attr("transform", "rotate(-45)");
-            g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
-        }
+    g.append("path")
+    .datum(timeArray)
+    .attr("fill", "none")
+    .attr("stroke", "#4ecdc4")
+    .attr("stroke-width", 3)
+    .attr("d", line);
 
-        function createLocationChart() {
-            const margin = {top: 20, right: 20, bottom: 80, left: 40};
-            const width = 400 - margin.left - margin.right;
-            const height = 300 - margin.bottom - margin.top;
+    // Add dots on the line
+    g.selectAll(".dot")
+    .data(timeArray)
+    .enter().append("circle")
+    .attr("class", "dot")
+    .attr("cx", d => x(d.date))
+    .attr("cy", d => y(d.count))
+    .attr("r", 5)
+    .attr("fill", "#ff6b6b")
+    .attr("stroke", "#ffffff")
+    .attr("stroke-width", 2)
+    .on("mouseover", (event, d) => {
+            // Make dot larger on hover
+            d3.select(event.target).attr("r", 7);
+            
+            tooltip.style("opacity", 1)
+            .html(`<strong>${d3.timeFormat("%B %Y")(d.date)}</strong><br/>Deaths: ${d.count}`)
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px");
+        })
+    .on("mouseout", (event, d) => {
+            // Reset dot size
+            d3.select(event.target).attr("r", 5);
+            
+            tooltip.style("opacity", 0);
+        });
 
-            const locationCounts = d3.rollup(filteredData.filter(d => d.location), v => v.length, d => d.location);
-            const locationData = Array.from(locationCounts, ([loc, count]) => ({loc, count}))
-            .sort((a, b) => b.count - a.count).slice(0, 10);
+    // Add axes
+    g.append("g")
+    .attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%b %Y")))
+    .selectAll("text")
+    .style("text-anchor", "end")
+    .attr("dx", "-.8em")
+    .attr("dy", ".15em")
+    .attr("transform", "rotate(-45)");
+    
+    g.append("g")
+    .attr("class", "axis")
+    .call(d3.axisLeft(y).tickFormat(d3.format("d")));
+}
+function createLocationChart() {
+    const margin = {top: 20, right: 20, bottom: 80, left: 40};
+    const width = 400 - margin.left - margin.right;
+    const height = 300 - margin.bottom - margin.top;
 
-            const svg = d3.select("#locationChart")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
+    const locationCounts = d3.rollup(filteredData.filter(d => d.location), v => v.length, d => d.location);
+    const locationData = Array.from(locationCounts, ([loc, count]) => ({loc, count}))
+    .sort((a, b) => b.count - a.count).slice(0, 10);
 
-            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const svg = d3.select("#locationChart")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
 
-            const x = d3.scaleBand().domain(locationData.map(d => d.loc))
-            .range([0, width]).padding(0.1);
-            const y = d3.scaleLinear().domain([0, d3.max(locationData, d => d.count) || 1])
-            .range([height, 0]);
+    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-            g.selectAll(".bar")
-            .data(locationData)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", d => x(d.loc))
-            .attr("width", x.bandwidth())
-            .attr("y", d => y(d.count))
-            .attr("height", d => height - y(d.count))
-            .attr("fill", "#45b7d1")
-            .on("mouseover", (event, d) => {
-                tooltip.style("opacity", 1)
-                .html(`<strong>${d.loc}</strong><br/>Deaths: ${d.count}`)
-                .style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 10) + "px");
-            })
-            .on("mouseout", () => tooltip.style("opacity", 0));
+    const x = d3.scaleBand().domain(locationData.map(d => d.loc))
+    .range([0, width]).padding(0.1);
+    const y = d3.scaleLinear().domain([0, d3.max(locationData, d => d.count) || 1])
+    .range([height, 0]);
 
-            g.append("g").attr("class", "axis")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x))
-            .selectAll("text").style("text-anchor", "end")
-            .attr("dx", "-.8em").attr("dy", ".15em")
-            .attr("transform", "rotate(-45)");
-            g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
-        }
+    g.selectAll(".bar")
+    .data(locationData)
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", d => x(d.loc))
+    .attr("width", x.bandwidth())
+    .attr("y", d => y(d.count))
+    .attr("height", d => height - y(d.count))
+    .attr("fill", "#45b7d1")
+    .on("mouseover", (event, d) => {
+        tooltip.style("opacity", 1)
+        .html(`<strong>${d.loc}</strong><br/>Deaths: ${d.count}`)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 10) + "px");
+    })
+    .on("mouseout", () => tooltip.style("opacity", 0));
 
-        function createMobChart() {
-            const margin = {top: 20, right: 20, bottom: 80, left: 40};
-            const width = 400 - margin.left - margin.right;
-            const height = 300 - margin.bottom - margin.top;
+    g.append("g").attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x))
+    .selectAll("text").style("text-anchor", "end")
+    .attr("dx", "-.8em").attr("dy", ".15em")
+    .attr("transform", "rotate(-45)");
+    g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
+}
 
-            const mobCounts = d3.rollup(filteredData.filter(d => d.mob), v => v.length, d => d.mob);
-            const mobData = Array.from(mobCounts, ([mob, count]) => ({mob, count}))
-            .sort((a, b) => b.count - a.count).slice(0, 10);
+function createMobChart() {
+    const margin = {top: 20, right: 20, bottom: 80, left: 40};
+    const width = 400 - margin.left - margin.right;
+    const height = 300 - margin.bottom - margin.top;
 
-            const svg = d3.select("#mobChart")
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
+    const mobCounts = d3.rollup(filteredData.filter(d => d.mob), v => v.length, d => d.mob);
+    const mobData = Array.from(mobCounts, ([mob, count]) => ({mob, count}))
+    .sort((a, b) => b.count - a.count).slice(0, 10);
 
-            const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const svg = d3.select("#mobChart")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
 
-            const x = d3.scaleBand().domain(mobData.map(d => d.mob))
-            .range([0, width]).padding(0.1);
-            const y = d3.scaleLinear().domain([0, d3.max(mobData, d => d.count) || 1])
-            .range([height, 0]);
+    const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-            g.selectAll(".bar")
-            .data(mobData)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", d => x(d.mob))
-            .attr("width", x.bandwidth())
-            .attr("y", d => y(d.count))
-            .attr("height", d => height - y(d.count))
-            .attr("fill", "#ff6b6b")
-            .on("mouseover", (event, d) => {
-                tooltip.style("opacity", 1)
-                .html(`<strong>${d.mob}</strong><br/>Kills: ${d.count}`)
-                .style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 10) + "px");
-            })
-            .on("mouseout", () => tooltip.style("opacity", 0));
+    const x = d3.scaleBand().domain(mobData.map(d => d.mob))
+    .range([0, width]).padding(0.1);
+    const y = d3.scaleLinear().domain([0, d3.max(mobData, d => d.count) || 1])
+    .range([height, 0]);
 
-            g.append("g").attr("class", "axis")
-            .attr("transform", `translate(0,${height})`)
-            .call(d3.axisBottom(x))
-            .selectAll("text").style("text-anchor", "end")
-            .attr("dx", "-.8em").attr("dy", ".15em")
-            .attr("transform", "rotate(-45)");
-            g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
-        }
+    g.selectAll(".bar")
+    .data(mobData)
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", d => x(d.mob))
+    .attr("width", x.bandwidth())
+    .attr("y", d => y(d.count))
+    .attr("height", d => height - y(d.count))
+    .attr("fill", "#ff6b6b")
+    .on("mouseover", (event, d) => {
+        tooltip.style("opacity", 1)
+        .html(`<strong>${d.mob}</strong><br/>Kills: ${d.count}`)
+        .style("left", (event.pageX + 10) + "px")
+        .style("top", (event.pageY - 10) + "px");
+    })
+    .on("mouseout", () => tooltip.style("opacity", 0));
+
+    g.append("g").attr("class", "axis")
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x))
+    .selectAll("text").style("text-anchor", "end")
+    .attr("dx", "-.8em").attr("dy", ".15em")
+    .attr("transform", "rotate(-45)");
+    g.append("g").attr("class", "axis").call(d3.axisLeft(y).tickFormat(d3.format("d")));
+}
 
 // Initialize
 document.addEventListener('DOMContentLoaded', loadData);

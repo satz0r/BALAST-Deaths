@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BALAST Guild - Death Analytics Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/style.css" />
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/charts/baseChart.js"></script>
+    <script src="js/charts/classChart.js"></script>
+    <script src="js/charts/levelChart.js"></script>
+    <script src="js/charts/locationChart.js"></script>
+    <script src="js/charts/deathCauseChart.js"></script>
+    <script src="js/charts/timelineChart.js"></script>
+    <script src="js/main.js"></script>
+  </head>
+  <body>
+    <div class="tooltip" id="tooltip"></div>
+    <!-- <a href="admin-interface.html" class="admin-link">⚙️ Admin Panel</a> -->
+    <div class="dashboard">
+      <div class="header">
+        <img
+          src="assets/balast_logo.svg"
+          alt="BALAST Guild Logo"
+          class="balastLogo"
+        />
+        <h1>Guild Death Analytics</h1>
+      </div>
+
+      <div id="loading" class="loading">
+        Loading death data from database...
+      </div>
+
+      <div id="error" class="error" style="display: none">
+        Error loading data. Please check your connection and try again.
+      </div>
+
+      <div id="dashboard-content" style="display: none">
+        <div class="controls">
+          <div class="control-group">
+            <label>Class Filter:</label>
+            <select id="classFilter">
+              <option value="all">All Classes</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Level Range:</label>
+            <select id="levelFilter">
+              <option value="all">All Levels</option>
+              <option value="10-20">10-20</option>
+              <option value="21-40">21-40</option>
+              <option value="41-59">41-59</option>
+              <option value="60">Level 60</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Location:</label>
+            <select id="locationFilter">
+              <option value="all">All Locations</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Raid Deaths Only:</label>
+            <select id="raidFilter">
+              <option value="all">All Deaths</option>
+              <option value="yes">Raid Deaths Only</option>
+              <option value="no">Non-Raid Deaths</option>
+            </select>
+          </div>
+        </div>
+        <div class="stats-overview" id="stats-overview">
+          <!-- Stats will be populated here -->
+        </div>
+
+        <div class="charts-container">
+          <div class="chart-container">
+            <h3 id="classChartTitle">Deaths by Class</h3>
+            <div id="classChart"></div>
+          </div>
+          <div class="chart-container">
+            <h3>Deaths by Level Range</h3>
+            <div id="levelChart"></div>
+          </div>
+          <div class="chart-container">
+            <h3>Most Dangerous Locations</h3>
+            <div id="locationChart"></div>
+          </div>
+          <div class="chart-container">
+            <h3>Cause of Death</h3>
+            <div id="deathCauseChart"></div>
+          </div>
+          <div class="chart-container full-width">
+            <h3>Death Timeline</h3>
+            <div id="timelineChart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

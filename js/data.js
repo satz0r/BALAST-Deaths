@@ -66,6 +66,18 @@ function populateFilters() {
   d3.select("#levelFilter").on("change", updateDashboard);
   d3.select("#locationFilter").on("change", updateDashboard);
   d3.select("#raidFilter").on("change", updateDashboard);
+  d3.select("#resetFilters").on("click", resetAllFilters);
+}
+
+function resetAllFilters() {
+  // Reset all filter dropdowns to their default values
+  d3.select("#classFilter").property("value", "all");
+  d3.select("#levelFilter").property("value", "all");
+  d3.select("#locationFilter").property("value", "all");
+  d3.select("#raidFilter").property("value", "all");
+  
+  // Update the dashboard with reset filters
+  updateDashboard();
 }
 
 function updateDashboard() {

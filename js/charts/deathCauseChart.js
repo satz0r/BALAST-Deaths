@@ -28,7 +28,7 @@ function createDeathCauseChart() {
     .slice(0, 10);
 
   const leftMargin = calculateLeftMargin(deathCauseData, "death_cause");
-  const customMargins = { top: 20, right: 30, bottom: 40, left: leftMargin };
+  const customMargins = { top: 30, right: 30, bottom: 40, left: leftMargin };
 
   const { g, width, height } = createBaseChart(
     "#deathCauseChart",

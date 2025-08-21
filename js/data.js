@@ -1,6 +1,6 @@
 // Cache configuration
-const CACHE_KEY = 'wow_deaths_cache';
-const CACHE_TIME_KEY = 'wow_deaths_cache_time';
+const CACHE_KEY = "wow_deaths_cache";
+const CACHE_TIME_KEY = "wow_deaths_cache_time";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 async function loadData() {
@@ -8,8 +8,12 @@ async function loadData() {
     // Check cache first
     const cached = localStorage.getItem(CACHE_KEY);
     const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
-    
-    if (cached && cacheTime && (Date.now() - parseInt(cacheTime)) < CACHE_DURATION) {
+
+    if (
+      cached &&
+      cacheTime &&
+      Date.now() - parseInt(cacheTime) < CACHE_DURATION
+    ) {
       console.log("Loading data from cache");
       const cachedDeaths = JSON.parse(cached);
       processDataAndInitialize(cachedDeaths);
@@ -42,7 +46,7 @@ async function loadData() {
       </ul>
       <p><strong>Error:</strong> ${error.message}</p>
     `;
-    
+
     // Add cache clear button after a short delay
     setTimeout(addCacheClearButton, 100);
   }

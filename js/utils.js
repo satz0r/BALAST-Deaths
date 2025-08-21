@@ -22,10 +22,19 @@ function moveTooltip(event) {
 }
 
 function getSmartTickCount(maxValue) {
-  if (maxValue <= 1) return maxValue + 1;
-  if (maxValue <= 5) return maxValue + 1;
-  if (maxValue <= 10) return Math.min(maxValue + 1, 6);
-  return Math.min(10, Math.ceil(maxValue / 5));
+  // Ensure we never have more ticks than unique integer values
+  const integerMax = Math.floor(maxValue);
+  if (integerMax <= 0) return 2; // Show 0 and 1 at minimum
+  if (integerMax === 1) return 2; // Show 0 and 1
+  if (integerMax === 2) return 3; // Show 0, 1, 2
+  if (integerMax <= 5) return integerMax + 1; // Show all integers from 0 to max
+  if (integerMax <= 10) return Math.min(integerMax + 1, 6);
+  return Math.min(10, Math.ceil(integerMax / 5));
+}
+
+function formatIntegerTicks(d) {
+  // Only show integer values, no decimals
+  return Math.floor(d) === d ? d.toString() : "";
 }
 
 function calculateLeftMargin(data, key = "loc", fontSize = 11) {
@@ -63,7 +72,28 @@ function debounce(func, wait) {
 // Debounced dashboard update for better performance
 const debouncedUpdateDashboard = debounce(() => {
   updateDashboard();
-}, 300);
+}, 50);
+
+// Debounced resize handler for responsive charts
+const debouncedResizeCharts = debounce(() => {
+  if (
+    typeof updateCharts === "function" &&
+    filteredData &&
+    filteredData.length > 0
+  ) {
+    updateCharts();
+  }
+}, 250);
+
+// Add resize listener when DOM is ready
+if (typeof window !== "undefined") {
+  window.addEventListener("resize", debouncedResizeCharts);
+  // Also handle orientation changes on mobile devices
+  window.addEventListener("orientationchange", () => {
+    // Small delay to let the browser finish the orientation change
+    setTimeout(debouncedResizeCharts, 100);
+  });
+}
 
 function showChartLoading(chartId) {
   const container = d3.select(chartId);
@@ -75,7 +105,9 @@ function showChartLoading(chartId) {
     .style("padding", "40px")
     .style("color", "#4ecdc4")
     .style("font-size", "14px")
-    .html('<div style="animation: pulse 1.5s ease-in-out infinite;">📊 Updating chart...</div>');
+    .html(
+      '<div style="animation: pulse 1.5s ease-in-out infinite;">📊 Updating chart...</div>'
+    );
 }
 
 function showChartError(chartId, chartName) {
@@ -116,7 +148,7 @@ function createCharacterListBase(containerId, data, options = {}) {
     onBackClick,
     additionalInfoFunction = null,
     padding = "10px 12px",
-    margin = "3px 0"
+    margin = "3px 0",
   } = options;
 
   const container = d3.select(containerId);
@@ -180,13 +212,15 @@ function createCharacterListBase(containerId, data, options = {}) {
         d.level !== null && d.level !== undefined
           ? `Level ${d.level}`
           : "Unknown";
-      
+
       // Get colors from config.js
       const playerNameColor = classColors[d.class] || "#ffffff";
       const levelColor = getLevelRangeColor(d.level);
-      
+
       // Get additional info if function provided
-      const additionalInfo = additionalInfoFunction ? additionalInfoFunction(d) : "";
+      const additionalInfo = additionalInfoFunction
+        ? additionalInfoFunction(d)
+        : "";
 
       return `
           <div style="flex: 1; min-width: 200px;">
@@ -204,9 +238,9 @@ function createCharacterListBase(containerId, data, options = {}) {
 }
 
 function clearDataCache() {
-  localStorage.removeItem('wow_deaths_cache');
-  localStorage.removeItem('wow_deaths_cache_time');
-  console.log('Data cache cleared');
+  localStorage.removeItem("wow_deaths_cache");
+  localStorage.removeItem("wow_deaths_cache_time");
+  console.log("Data cache cleared");
 }
 
 function addCacheClearButton() {

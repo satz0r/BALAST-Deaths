@@ -177,7 +177,7 @@ select option {
   flex: 1 1 100%;
   width: 100%;
   margin: 0;
-  padding: 0;
+  padding: 20px 20px 20px 20px; /* Restore padding to match other containers */
 }
 
 /* Enhanced tooltip styles */
@@ -222,6 +222,27 @@ select option {
 .axis line {
   stroke: #ffffff;
   stroke-width: 1;
+}
+
+/* Style for right Y-axis (monthly deaths) */
+.axis-right text {
+  fill: #4ecdc4;
+}
+
+.axis-right path,
+.axis-right line {
+  stroke: #4ecdc4;
+  stroke-width: 1;
+}
+
+/* WoW Classic phase indicator styles */
+.phase-line {
+  pointer-events: none;
+}
+
+.phase-label {
+  pointer-events: none;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* Enhanced bar styles with better hover effects */
@@ -361,7 +382,13 @@ svg {
 }
 
 @keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
 }

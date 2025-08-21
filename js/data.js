@@ -62,9 +62,19 @@ function populateFilters() {
     locationSelect.append("option").attr("value", loc).text(loc);
   });
 
+  const deathCauses = [
+    ...new Set(data.filter((d) => d.death_cause).map((d) => d.death_cause)),
+  ].sort();
+  const deathCauseSelect = d3.select("#deathCauseFilter");
+  deathCauseSelect.selectAll("option:not(:first-child)").remove();
+  deathCauses.forEach((cause) => {
+    deathCauseSelect.append("option").attr("value", cause).text(cause);
+  });
+
   d3.select("#classFilter").on("change", updateDashboard);
   d3.select("#levelFilter").on("change", updateDashboard);
   d3.select("#locationFilter").on("change", updateDashboard);
+  d3.select("#deathCauseFilter").on("change", updateDashboard);
   d3.select("#raidFilter").on("change", updateDashboard);
   d3.select("#resetFilters").on("click", resetAllFilters);
 }
@@ -74,8 +84,9 @@ function resetAllFilters() {
   d3.select("#classFilter").property("value", "all");
   d3.select("#levelFilter").property("value", "all");
   d3.select("#locationFilter").property("value", "all");
+  d3.select("#deathCauseFilter").property("value", "all");
   d3.select("#raidFilter").property("value", "all");
-  
+
   // Update the dashboard with reset filters
   updateDashboard();
 }
@@ -90,11 +101,14 @@ function applyFilters() {
   const classFilter = d3.select("#classFilter").node().value;
   const levelFilter = d3.select("#levelFilter").node().value;
   const locationFilter = d3.select("#locationFilter").node().value;
+  const deathCauseFilter = d3.select("#deathCauseFilter").node().value;
   const raidFilter = d3.select("#raidFilter").node().value;
 
   filteredData = data.filter((d) => {
     if (classFilter !== "all" && d.class !== classFilter) return false;
     if (locationFilter !== "all" && d.location !== locationFilter) return false;
+    if (deathCauseFilter !== "all" && d.death_cause !== deathCauseFilter)
+      return false;
     if (raidFilter === "yes" && !d.isRaid) return false;
     if (raidFilter === "no" && d.isRaid) return false;
 

@@ -89,6 +89,10 @@ function createCharacterList() {
       name: d.characterName,
       date: d.date, // Use the already parsed date from data.js
       level: d.level,
+      location: d.location,
+      deathCause: d.death_cause,
+      isRaid: d.isRaid,
+      class: d.class,
       dateString: d.death_date,
     }))
     .sort((a, b) => b.date - a.date); // Sort by newest first
@@ -126,8 +130,8 @@ function createCharacterList() {
     .enter()
     .append("div")
     .attr("class", "character-item")
-    .style("padding", "8px 12px")
-    .style("margin", "2px 0")
+    .style("padding", "10px 12px")
+    .style("margin", "3px 0")
     .style("background", "rgba(255, 255, 255, 0.1)")
     .style("border-radius", "5px")
     .style("border-left", `4px solid ${classColors[classFilter] || "#666"}`)
@@ -144,7 +148,8 @@ function createCharacterList() {
     .append("div")
     .style("display", "flex")
     .style("justify-content", "space-between")
-    .style("align-items", "center")
+    .style("align-items", "flex-start")
+    .style("flex-wrap", "wrap")
     .html((d) => {
       const formattedDate = d.date.toLocaleDateString("en-US", {
         year: "numeric",
@@ -155,11 +160,27 @@ function createCharacterList() {
         d.level !== null && d.level !== undefined
           ? `Level ${d.level}`
           : "Unknown";
+
+      // Get colors from config.js
+      const playerNameColor = classColors[d.class] || "#ffffff";
+      const levelColor = getLevelRangeColor(d.level);
+      const locationDisplay = d.location || "Unknown";
+      const deathCauseDisplay = d.deathCause || "Unknown";
+
+      // Make location bold if it's a raid death
+      const locationStyle = d.isRaid ? "font-weight: bold;" : "";
+
       return `
-          <span style="color: #ffffff; font-weight: 500;">${d.name}</span>
-          <div style="text-align: right;">
+          <div style="flex: 1; min-width: 200px;">
+            <div style="color: ${playerNameColor}; font-weight: 500; margin-bottom: 2px;">${d.name}</div>
+            <div style="font-size: 0.85em; color: #999;">
+              <span style="color: #45b7d1; ${locationStyle}">${locationDisplay}</span> • 
+              <span style="color: #ff6b6b;">${deathCauseDisplay}</span>
+            </div>
+          </div>
+          <div style="text-align: right; margin-left: 10px;">
             <div style="color: #45b7d1; font-size: 0.9em;">${formattedDate}</div>
-            <div style="color: #ffd93d; font-weight: bold;">${levelDisplay}</div>
+            <div style="color: ${levelColor}; font-weight: bold; font-size: 0.9em;">${levelDisplay}</div>
           </div>
         `;
     });

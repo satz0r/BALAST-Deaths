@@ -38,3 +38,12 @@ function updateFilter(filterId, value) {
   select.property("value", value);
   updateDashboard();
 }
+
+function getLevelRangeColor(level) {
+  if (level === null || level === undefined) return "#999";
+  if (level >= 1 && level <= 20) return levelRangeColors["10-20"];
+  if (level >= 21 && level <= 40) return levelRangeColors["21-40"];
+  if (level >= 41 && level <= 59) return levelRangeColors["41-59"];
+  if (level === 60) return levelRangeColors["60"];
+  return "#999"; // fallback color
+}

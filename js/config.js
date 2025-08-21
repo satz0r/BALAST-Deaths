@@ -23,10 +23,10 @@ const classColors = {
 };
 
 const levelRangeColors = {
-  "10-20": "#fcababff",
-  "21-40": "#ff7777ff",
-  "41-59": "#e64747ff",
-  60: "#b41c1cff",
+  "10-20": "#c6ffb3",
+  "21-40": "#d9fd86",
+  "41-59": "#ecfb59",
+  60: "#fff92c",
 };
 
 // Chart constants

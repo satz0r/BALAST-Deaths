@@ -65,6 +65,12 @@
             </select>
           </div>
           <div class="control-group">
+            <label>Cause of Death:</label>
+            <select id="deathCauseFilter">
+              <option value="all">All Causes</option>
+            </select>
+          </div>
+          <div class="control-group">
             <label>Raid Deaths Only:</label>
             <select id="raidFilter">
               <option value="all">All Deaths</option>
@@ -73,7 +79,9 @@
             </select>
           </div>
           <div class="control-group">
-            <button id="resetFilters" class="reset-filters-btn">Reset All Filters</button>
+            <button id="resetFilters" class="reset-filters-btn">
+              Reset All Filters
+            </button>
           </div>
         </div>
         <div class="stats-overview" id="stats-overview">
@@ -86,15 +94,15 @@
             <div id="classChart"></div>
           </div>
           <div class="chart-container">
-            <h3>Deaths by Level Range</h3>
+            <h3 id="levelChartTitle">Deaths by Level Range</h3>
             <div id="levelChart"></div>
           </div>
           <div class="chart-container">
-            <h3>Most Dangerous Locations</h3>
+            <h3 id="locationChartTitle">Most Dangerous Locations</h3>
             <div id="locationChart"></div>
           </div>
           <div class="chart-container">
-            <h3>Cause of Death</h3>
+            <h3 id="deathCauseChartTitle">Cause of Death</h3>
             <div id="deathCauseChart"></div>
           </div>
           <div class="chart-container full-width">

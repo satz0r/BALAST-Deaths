@@ -9,6 +9,7 @@
     <link type="text/css" rel="stylesheet" href="/style.css" />
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
+    <script src="js/characterList.js"></script>
     <script src="js/data.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/charts/baseChart.js"></script>
@@ -43,13 +44,11 @@
       <div id="dashboard-content" style="display: none">
         <div class="controls">
           <div class="control-group">
-            <label>Class Filter:</label>
             <select id="classFilter">
               <option value="all">All Classes</option>
             </select>
           </div>
           <div class="control-group">
-            <label>Level Range:</label>
             <select id="levelFilter">
               <option value="all">All Levels</option>
               <option value="10-20">10-20</option>
@@ -59,19 +58,16 @@
             </select>
           </div>
           <div class="control-group">
-            <label>Location:</label>
             <select id="locationFilter">
               <option value="all">All Locations</option>
             </select>
           </div>
           <div class="control-group">
-            <label>Cause of Death:</label>
             <select id="deathCauseFilter">
               <option value="all">All Causes</option>
             </select>
           </div>
           <div class="control-group">
-            <label>Raid Deaths Only:</label>
             <select id="raidFilter">
               <option value="all">All Deaths</option>
               <option value="yes">Raid Deaths Only</option>
@@ -80,7 +76,7 @@
           </div>
           <div class="control-group">
             <button id="resetFilters" class="reset-filters-btn">
-              Reset All Filters
+              Reset Filters
             </button>
           </div>
         </div>
@@ -97,6 +93,10 @@
             <h3 id="levelChartTitle">Deaths by Level Range</h3>
             <div id="levelChart"></div>
           </div>
+          <div class="chart-container full-width">
+            <h3>Death Timeline</h3>
+            <div id="timelineChart"></div>
+          </div>
           <div class="chart-container">
             <h3 id="locationChartTitle">Most Dangerous Locations</h3>
             <div id="locationChart"></div>
@@ -104,10 +104,6 @@
           <div class="chart-container">
             <h3 id="deathCauseChartTitle">Cause of Death</h3>
             <div id="deathCauseChart"></div>
-          </div>
-          <div class="chart-container full-width">
-            <h3>Death Timeline</h3>
-            <div id="timelineChart"></div>
           </div>
         </div>
       </div>

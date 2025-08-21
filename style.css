@@ -1,3 +1,6 @@
+/* =================================
+   BASE STYLES
+   ================================= */
 body {
   font-family: "roboto", sans-serif;
   margin: 0;
@@ -16,6 +19,9 @@ body {
   position: relative;
 }
 
+/* =================================
+   HEADER & NAVIGATION
+   ================================= */
 h1,
 h2,
 h3 {
@@ -26,9 +32,7 @@ h3 {
 
 .header {
   text-align: center;
-  margin-bottom: 30px;
   padding: 20px;
-  background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   backdrop-filter: blur(10px);
 }
@@ -59,61 +63,75 @@ h3 {
   margin: 20px 0;
 }
 
+/* =================================
+   STATS & OVERVIEW CARDS
+   ================================= */
 .stats-overview {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+  padding: 10px 0;
 }
 
 .stat-card {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 10px;
+  background: none;
+  padding: 8px 12px;
+  border-radius: 6px;
   text-align: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  /* border: 1px solid rgba(78, 205, 196, 0.3); */
+  min-width: 120px;
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .stat-card h3 {
-  margin: 0 0 10px 0;
+  margin: 0;
   color: #4ecdc4;
+  font-size: 0.9em;
+  font-weight: 300;
+  display: inline;
 }
 
 .stat-card .value {
-  font-size: 1.2em;
+  font-size: 1.1em;
   color: #ff6b6b;
+  font-weight: 500;
+  display: inline;
 }
 
+/* =================================
+   CONTROLS & FILTERS
+   ================================= */
 .controls {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 30px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
 }
 
 .control-group {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
 }
 
 .control-group label {
-  color: #4ecdc4;
+  display: none; /* Hide labels since we'll use placeholder text */
 }
 
 select,
 input {
-  padding: 8px;
-  border: none;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 10px;
+  border: 1px solid rgba(78, 205, 196, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
   color: white;
-  font-size: 14px;
+  font-size: 13px;
+  min-width: 120px;
 }
 
 select option {
@@ -122,26 +140,42 @@ select option {
 }
 
 .reset-filters-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 5px;
-  background: #ff6b6b;
-  color: white;
-  font-size: 14px;
+  padding: 6px 12px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 4px;
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+  font-size: 13px;
   cursor: pointer;
-  transition: background 0.2s ease;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-top: 20px;
+  transition: all 0.2s ease;
+  font-weight: 400;
+  min-width: 100px;
 }
 
 .reset-filters-btn:hover {
-  background: #ff5252;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  background: rgba(255, 107, 107, 0.2);
+  border-color: #ff6b6b;
 }
 
+.cache-clear-btn {
+  background: #4ecdc4;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 14px;
+  transition: background 0.2s ease;
+}
+
+.cache-clear-btn:hover {
+  background: #45b7d1;
+}
+
+/* =================================
+   CHARTS & VISUALIZATIONS
+   ================================= */
 .charts-container {
   display: flex;
   flex-wrap: wrap;
@@ -178,6 +212,114 @@ select option {
   width: 100%;
   margin: 0;
   padding: 20px 20px 20px 20px; /* Restore padding to match other containers */
+}
+
+/* =================================
+   CHARACTER LISTS
+   ================================= */
+.character-list-container {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  border-radius: 10px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 30px;
+}
+
+.character-list-scrollable {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 5px; /* Reduced from 10px */
+}
+
+.character-list-back-button-container {
+  margin-bottom: 10px; /* Reduced from 15px */
+}
+
+.character-list-back-button {
+  background: #4ecdc4;
+  color: white;
+  border: none;
+  padding: 6px 12px; /* Reduced from 8px 16px */
+  border-radius: 4px; /* Reduced from 5px */
+  cursor: pointer;
+  transition: background 0.2s ease;
+  font-size: 13px; /* Added smaller font size */
+}
+
+.character-list-back-button:hover {
+  background: #45b7d1;
+}
+
+.character-item {
+  padding: 6px 8px; /* Reduced from 10px 12px */
+  margin: 2px 0; /* Reduced from 3px 0 */
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px; /* Reduced from 5px */
+  border-left: 3px solid #45b7d1; /* Reduced from 4px */
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.character-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.character-item-hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.character-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 5px; /* Added gap for better spacing */
+}
+
+.character-item-main {
+  flex: 1;
+  min-width: 150px; /* Reduced from 200px for better mobile fit */
+}
+
+.character-item-name {
+  font-weight: 500;
+  margin-bottom: 1px; /* Reduced from 2px */
+  font-size: 0.9em; /* Made slightly smaller */
+}
+
+.character-item-details {
+  font-size: 0.8em; /* Reduced from 0.85em */
+  color: #999;
+  line-height: 1.2; /* Added for better spacing */
+}
+
+.character-item-location {
+  color: #45b7d1;
+}
+
+.character-item-location.raid {
+  font-weight: bold;
+}
+
+.character-item-death-cause {
+  color: #ff6b6b;
+}
+
+.character-item-meta {
+  text-align: right;
+  margin-left: 8px; /* Reduced from 10px */
+  flex-shrink: 0; /* Prevent shrinking on mobile */
+}
+
+.character-item-date {
+  color: #e6e6e6ff;
+  font-size: 0.8em; /* Reduced from 0.9em */
+}
+
+.character-item-level {
+  font-weight: bold;
+  font-size: 0.8em; /* Reduced from 0.9em */
 }
 
 /* Enhanced tooltip styles */
@@ -288,36 +430,9 @@ select option {
   opacity: 0.8;
 }
 
-/* Character item styles */
-.character-item {
-  transition: all 0.2s ease-in-out;
-}
-
-.character-item:hover {
-  transform: translateX(2px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Custom scrollbar for character list */
-.character-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.character-list::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-}
-
-.character-list::-webkit-scrollbar-thumb {
-  background: #4ecdc4;
-  border-radius: 3px;
-}
-
-.character-list::-webkit-scrollbar-thumb:hover {
-  background: #45b7d1;
-}
-
-/* Responsive design */
+/* =================================
+   RESPONSIVE DESIGN
+   ================================= */
 @media (max-width: 768px) {
   .chart-container {
     flex: 1 1 100%;
@@ -325,16 +440,176 @@ select option {
   }
 
   .stats-overview {
-    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding: 5px 0;
+  }
+
+  .stat-card {
+    min-width: 100px;
+    padding: 6px 8px;
+    border-width: 1px;
+    gap: 4px;
+  }
+
+  .stat-card h3 {
+    font-size: 0.8em;
+    margin: 0;
+  }
+
+  .stat-card .value {
+    font-size: 1em;
   }
 
   .controls {
-    flex-direction: column;
+    gap: 6px;
+    padding: 8px 5px;
+  }
+
+  select,
+  input {
+    font-size: 12px;
+    min-width: 100px;
+    padding: 5px 8px;
+  }
+
+  .reset-filters-btn {
+    font-size: 12px;
+    padding: 5px 10px;
+    min-width: 80px;
+  }
+
+  /* Character list mobile styles */
+  .character-list-scrollable {
+    padding: 3px;
+    max-height: 300px; /* Reduced for mobile */
+  }
+
+  .character-item {
+    padding: 4px 6px;
+    margin: 1px 0;
+    border-left-width: 2px;
+  }
+
+  .character-item-content {
+    gap: 3px;
+  }
+
+  .character-item-main {
+    min-width: 120px;
+  }
+
+  .character-item-name {
+    font-size: 0.85em;
+  }
+
+  .character-item-details {
+    font-size: 0.75em;
+  }
+
+  .character-item-meta {
+    margin-left: 5px;
+  }
+
+  .character-item-date,
+  .character-item-level {
+    font-size: 0.75em;
   }
 
   .tooltip {
     max-width: 200px;
     font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-overview {
+    gap: 6px;
+    margin-bottom: 10px;
+    padding: 3px 0;
+  }
+
+  .stat-card {
+    min-width: 80px;
+    padding: 4px 6px;
+    border-width: 1px;
+    gap: 3px;
+  }
+
+  .stat-card h3 {
+    font-size: 0.75em;
+    margin: 0;
+  }
+
+  .stat-card .value {
+    font-size: 0.9em;
+  }
+
+  .controls {
+    gap: 4px;
+    padding: 5px;
+  }
+
+  select,
+  input {
+    font-size: 11px;
+    min-width: 85px;
+    padding: 4px 6px;
+  }
+
+  .reset-filters-btn {
+    font-size: 11px;
+    padding: 4px 8px;
+    min-width: 70px;
+  }
+
+  /* Character list ultra-compact mobile styles */
+  .character-list-scrollable {
+    padding: 2px;
+    max-height: 250px; /* Further reduced for small mobile */
+  }
+
+  .character-item {
+    padding: 3px 4px;
+    margin: 1px 0;
+    border-radius: 3px;
+  }
+
+  .character-item-content {
+    flex-direction: column; /* Stack on very small screens */
+    gap: 2px;
+  }
+
+  .character-item-main {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .character-item-name {
+    font-size: 0.8em;
+    margin-bottom: 0;
+  }
+
+  .character-item-details {
+    font-size: 0.7em;
+  }
+
+  .character-item-meta {
+    margin-left: 0;
+    text-align: left; /* Align left when stacked */
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .character-item-date,
+  .character-item-level {
+    font-size: 0.7em;
+  }
+
+  .character-list-back-button {
+    padding: 4px 8px;
+    font-size: 11px;
   }
 }
 
@@ -373,12 +648,24 @@ svg {
 /* Chart loading and error states */
 .chart-loading {
   animation: pulse 1.5s ease-in-out infinite;
+  text-align: center;
+  padding: 40px;
+  color: #4ecdc4;
+  font-size: 14px;
+}
+
+.chart-loading-content {
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 .chart-error {
   background: rgba(255, 107, 107, 0.1);
   border: 1px solid #ff6b6b;
   border-radius: 5px;
+  text-align: center;
+  padding: 40px;
+  color: #ff6b6b;
+  font-size: 14px;
 }
 
 @keyframes pulse {

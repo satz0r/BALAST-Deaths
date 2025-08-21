@@ -101,13 +101,7 @@ function showChartLoading(chartId) {
   container
     .append("div")
     .attr("class", "chart-loading")
-    .style("text-align", "center")
-    .style("padding", "40px")
-    .style("color", "#4ecdc4")
-    .style("font-size", "14px")
-    .html(
-      '<div style="animation: pulse 1.5s ease-in-out infinite;">📊 Updating chart...</div>'
-    );
+    .html('<div class="chart-loading-content">📊 Updating chart...</div>');
 }
 
 function showChartError(chartId, chartName) {
@@ -116,10 +110,6 @@ function showChartError(chartId, chartName) {
   container
     .append("div")
     .attr("class", "chart-error")
-    .style("text-align", "center")
-    .style("padding", "40px")
-    .style("color", "#ff6b6b")
-    .style("font-size", "14px")
     .html(`⚠️ Error loading ${chartName} chart`);
 }
 
@@ -140,103 +130,6 @@ function createChartSafely(chartFunction, chartName, chartId) {
   }
 }
 
-function createCharacterListBase(containerId, data, options = {}) {
-  const {
-    maxHeight = "400px",
-    borderColor = "#45b7d1",
-    backButtonText = "← Back to Chart",
-    onBackClick,
-    additionalInfoFunction = null,
-    padding = "10px 12px",
-    margin = "3px 0",
-  } = options;
-
-  const container = d3.select(containerId);
-  container.selectAll("*").remove();
-
-  // Create a styled list container
-  const listContainer = container
-    .append("div")
-    .style("max-height", maxHeight)
-    .style("overflow-y", "auto")
-    .style("padding", "10px");
-
-  // Add a "Clear Filter" button
-  listContainer
-    .append("div")
-    .style("margin-bottom", "15px")
-    .append("button")
-    .text(backButtonText)
-    .style("background", "#4ecdc4")
-    .style("color", "white")
-    .style("border", "none")
-    .style("padding", "8px 16px")
-    .style("border-radius", "5px")
-    .style("cursor", "pointer")
-    .on("click", onBackClick);
-
-  // Create character list
-  const characterItems = listContainer
-    .selectAll(".character-item")
-    .data(data)
-    .enter()
-    .append("div")
-    .attr("class", "character-item")
-    .style("padding", padding)
-    .style("margin", margin)
-    .style("background", "rgba(255, 255, 255, 0.1)")
-    .style("border-radius", "5px")
-    .style("border-left", `4px solid ${borderColor}`)
-    .style("cursor", "pointer")
-    .style("transition", "background 0.2s")
-    .on("mouseover", function () {
-      d3.select(this).style("background", "rgba(255, 255, 255, 0.2)");
-    })
-    .on("mouseout", function () {
-      d3.select(this).style("background", "rgba(255, 255, 255, 0.1)");
-    });
-
-  characterItems
-    .append("div")
-    .style("display", "flex")
-    .style("justify-content", "space-between")
-    .style("align-items", "flex-start")
-    .style("flex-wrap", "wrap")
-    .html((d) => {
-      const formattedDate = d.date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-      const levelDisplay =
-        d.level !== null && d.level !== undefined
-          ? `Level ${d.level}`
-          : "Unknown";
-
-      // Get colors from config.js
-      const playerNameColor = classColors[d.class] || "#ffffff";
-      const levelColor = getLevelRangeColor(d.level);
-
-      // Get additional info if function provided
-      const additionalInfo = additionalInfoFunction
-        ? additionalInfoFunction(d)
-        : "";
-
-      return `
-          <div style="flex: 1; min-width: 200px;">
-            <div style="color: ${playerNameColor}; font-weight: 500; margin-bottom: 2px;">${d.name}</div>
-            ${additionalInfo}
-          </div>
-          <div style="text-align: right; margin-left: 10px;">
-            <div style="color: #45b7d1; font-size: 0.9em;">${formattedDate}</div>
-            <div style="color: ${levelColor}; font-weight: bold; font-size: 0.9em;">${levelDisplay}</div>
-          </div>
-        `;
-    });
-
-  return listContainer;
-}
-
 function clearDataCache() {
   localStorage.removeItem("wow_deaths_cache");
   localStorage.removeItem("wow_deaths_cache_time");
@@ -249,16 +142,7 @@ function addCacheClearButton() {
   if (errorDiv && errorDiv.style.display !== "none") {
     const clearButton = document.createElement("button");
     clearButton.textContent = "Clear Cache & Retry";
-    clearButton.style.cssText = `
-      background: #4ecdc4;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 15px;
-      font-size: 14px;
-    `;
+    clearButton.className = "cache-clear-btn";
     clearButton.onclick = () => {
       clearDataCache();
       window.location.reload();

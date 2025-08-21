@@ -29,7 +29,75 @@ const levelRangeColors = {
   60: "#fff92c",
 };
 
+// Location colors for location chart
+const locationColorCategories = {
+  raids: {
+    color: "#e93f3fff",
+    locations: [
+      "Blackwing Lair",
+      "Ahn'Qiraj 40",
+      "Molten Core",
+      "Onyxia's Lair",
+      "Zul'Gurub",
+      "Naxxramas",
+      "Ahn'Qiraj 20",
+    ],
+  },
+  dungeons: {
+    color: "#d6a7a7ff",
+    locations: [
+      "Dire Maul",
+      "Stratholme",
+      "Scholomance",
+      "Blackrock Depths",
+      "Scarlet Monastery",
+      "The Stockade",
+      "The Deadmines",
+      "Shadowfang Keep",
+      "Ragefire Chasm",
+      "Maraudon",
+      "Gnomeregan",
+      "Blackrock Spire",
+      "Blackrock Mountain",
+      "Uldaman",
+    ],
+  },
+  zones: {
+    color: "#44aaff ff",
+    locations: [], // Regular zones use default
+  },
+};
+
+const locationColors = {
+  default: "#e6e6e6ff",
+};
+
+// Death cause colors for death cause chart
+const deathCauseColors = {
+  default: "#e6e6e6ff",
+  // Add specific death cause colors here as needed
+  PvP: "#ff2222",
+  Boss: "#aa1155",
+  Environment: "#ff8822",
+  Monster: "#44aa88",
+};
+
+// Helper function to get colors
+function getLocationColor(location) {
+  // Check each category
+  for (const category of Object.values(locationColorCategories)) {
+    if (category.locations.includes(location)) {
+      return category.color;
+    }
+  }
+  return locationColors.default;
+}
+
+function getDeathCauseColor(deathCause) {
+  return deathCauseColors[deathCause] || deathCauseColors.default;
+}
+
 // Chart constants
 const MAX_BAR_WIDTH = 40;
-const MAX_BAR_HEIGHT = 40;
+const MAX_BAR_HEIGHT = 25; // Reduced from 40 to 25 for more compact bars
 const MIN_TIMELINE_WIDTH = 800;

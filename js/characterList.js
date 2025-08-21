@@ -7,7 +7,7 @@
  * @param {Array} options.data - The filtered data array
  * @param {string} options.borderColor - The border color for list items
  * @param {string} options.backButtonText - Text for the back button
- * @param {Function} options.getAdditionalInfo - Function to return additional info HTML
+ * @param {Function} [options.getAdditionalInfo] - Function to return additional info HTML (not used in table format)
  * @param {string} options.maxHeight - Maximum height of the list container
  */
 function createCharacterList(options) {
@@ -45,6 +45,15 @@ function createCharacterList(options) {
       updateFilter(filterType, "all");
     });
 
+  // Add table header
+  listContainer.append("div").attr("class", "character-table-header").html(`
+      <div>Date</div>
+      <div>Lvl</div>
+      <div>Name</div>
+      <div>Location</div>
+      <div>Cause</div>
+    `);
+
   // Create character list
   const characterItems = listContainer
     .selectAll(".character-item")
@@ -52,7 +61,6 @@ function createCharacterList(options) {
     .enter()
     .append("div")
     .attr("class", "character-item")
-    .style("border-left-color", borderColor) // Keep dynamic border color as style
     .on("mouseover", function () {
       d3.select(this).classed("character-item-hover", true);
     })
@@ -60,40 +68,32 @@ function createCharacterList(options) {
       d3.select(this).classed("character-item-hover", false);
     });
 
-  characterItems
-    .append("div")
-    .attr("class", "character-item-content")
-    .html((d) => {
-      const formattedDate = d.date
-        .toLocaleDateString("en-US", {
-          year: "2-digit",
-          month: "short",
-          day: "numeric",
-        })
-        .replace(/,\s/g, " "); // Remove comma and space to prevent line breaks
-      const levelDisplay =
-        d.level !== null && d.level !== undefined
-          ? `Level ${d.level}`
-          : "Unknown";
-
-      // Get colors from config.js
-      const playerNameColor = classColors[d.class] || "#ffffff";
-      const levelColor = getLevelRangeColor(d.level);
-
-      // Get additional info from the provided function
-      const additionalInfo = getAdditionalInfo(d);
-
-      return `
-          <div class="character-item-main">
-            <div class="character-item-name" style="color: ${playerNameColor};">${d.characterName}</div>
-            ${additionalInfo}
-          </div>
-          <div class="character-item-meta">
-            <div class="character-item-date">${formattedDate}</div>
-            <div class="character-item-level" style="color: ${levelColor};">${levelDisplay}</div>
-          </div>
-        `;
+  characterItems.html((d) => {
+    const formattedDate = d.date.toLocaleDateString("en-GB", {
+      year: "2-digit",
+      month: "2-digit",
+      day: "2-digit",
     });
+    const levelDisplay =
+      d.level !== null && d.level !== undefined ? d.level : "?";
+
+    // Get colors from config.js
+    const playerNameColor = classColors[d.class] || "#ffffff";
+    const levelColor = getLevelRangeColor(d.level);
+    const locationDisplay = d.location || "Unknown";
+    const deathCauseDisplay = d.death_cause || "Unknown";
+    const locationColor = getLocationColor(locationDisplay);
+    const deathCauseColor = getDeathCauseColor(deathCauseDisplay);
+    const raidClass = d.isRaid ? "raid" : "";
+
+    return `
+      <div class="character-table-date">${formattedDate}</div>
+      <div class="character-table-level" style="color: ${levelColor};">${levelDisplay}</div>
+      <div class="character-table-name" style="color: ${playerNameColor};">${d.characterName}</div>
+      <div class="character-table-location ${raidClass}" style="color: ${locationColor};">${locationDisplay}</div>
+      <div class="character-table-cause" style="color: ${deathCauseColor};">${deathCauseDisplay}</div>
+    `;
+  });
 }
 
 /**

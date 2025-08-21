@@ -34,16 +34,18 @@ function createCharacterList(options) {
     .attr("class", "character-list-scrollable")
     .style("max-height", maxHeight); // Keep dynamic max-height as style
 
-  // Add a "Clear Filter" button
-  listContainer
-    .append("div")
-    .attr("class", "character-list-back-button-container")
-    .append("button")
-    .attr("class", "character-list-back-button")
-    .text(backButtonText)
-    .on("click", () => {
-      updateFilter(filterType, "all");
-    });
+  // Add a "Clear Filter" button (only for filtered lists, not master list)
+  if (filterType) {
+    listContainer
+      .append("div")
+      .attr("class", "character-list-back-button-container")
+      .append("button")
+      .attr("class", "character-list-back-button")
+      .text(backButtonText)
+      .on("click", () => {
+        updateFilter(filterType, "all");
+      });
+  }
 
   // Add table header
   listContainer.append("div").attr("class", "character-table-header").html(`

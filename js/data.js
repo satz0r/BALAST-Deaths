@@ -73,6 +73,7 @@ function processDataAndInitialize(deaths) {
   populateFilters();
   updateStats();
   createCharts();
+  createMasterCharacterList(); // Create master list on initial load
 }
 
 function populateFilters() {

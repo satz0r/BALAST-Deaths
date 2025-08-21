@@ -64,11 +64,13 @@ function createCharacterList(options) {
     .append("div")
     .attr("class", "character-item-content")
     .html((d) => {
-      const formattedDate = d.date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
+      const formattedDate = d.date
+        .toLocaleDateString("en-US", {
+          year: "2-digit",
+          month: "short",
+          day: "numeric",
+        })
+        .replace(/,\s/g, " "); // Remove comma and space to prevent line breaks
       const levelDisplay =
         d.level !== null && d.level !== undefined
           ? `Level ${d.level}`
@@ -121,8 +123,8 @@ const CharacterListHelpers = {
     const locationColor = getLocationColor(locationDisplay);
 
     return `
-      <div class="character-item-location ${raidClass}" style="color: ${locationColor};">
-        ${locationDisplay}
+      <div class="character-item-details">
+        <span class="character-item-location ${raidClass}" style="color: ${locationColor};">${locationDisplay}</span>
       </div>
     `;
   },
@@ -149,8 +151,8 @@ const CharacterListHelpers = {
     const deathCauseColor = getDeathCauseColor(deathCauseDisplay);
 
     return `
-      <div class="character-item-death-cause" style="color: ${deathCauseColor};">
-        ${deathCauseDisplay}
+      <div class="character-item-details">
+        <span class="character-item-death-cause" style="color: ${deathCauseColor};">${deathCauseDisplay}</span>
       </div>
     `;
   },

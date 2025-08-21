@@ -107,7 +107,7 @@ function populateFilters() {
   d3.select("#levelFilter").on("change", debouncedUpdateDashboard);
   d3.select("#locationFilter").on("change", debouncedUpdateDashboard);
   d3.select("#deathCauseFilter").on("change", debouncedUpdateDashboard);
-  d3.select("#raidFilter").on("change", debouncedUpdateDashboard);
+  d3.select("#raidFilter").on("change", debouncedUpdateDashboard); // Checkbox change event
   d3.select("#resetFilters").on("click", resetAllFilters);
 }
 
@@ -117,7 +117,7 @@ function resetAllFilters() {
   d3.select("#levelFilter").property("value", "all");
   d3.select("#locationFilter").property("value", "all");
   d3.select("#deathCauseFilter").property("value", "all");
-  d3.select("#raidFilter").property("value", "all");
+  d3.select("#raidFilter").property("checked", false); // Reset checkbox to unchecked
 
   // Update the dashboard with reset filters
   updateDashboard();
@@ -134,15 +134,14 @@ function applyFilters() {
   const levelFilter = d3.select("#levelFilter").node().value;
   const locationFilter = d3.select("#locationFilter").node().value;
   const deathCauseFilter = d3.select("#deathCauseFilter").node().value;
-  const raidFilter = d3.select("#raidFilter").node().value;
+  const raidFilterChecked = d3.select("#raidFilter").node().checked; // Get checkbox state
 
   filteredData = data.filter((d) => {
     if (classFilter !== "all" && d.class !== classFilter) return false;
     if (locationFilter !== "all" && d.location !== locationFilter) return false;
     if (deathCauseFilter !== "all" && d.death_cause !== deathCauseFilter)
       return false;
-    if (raidFilter === "yes" && !d.isRaid) return false;
-    if (raidFilter === "no" && d.isRaid) return false;
+    if (raidFilterChecked && !d.isRaid) return false; // If checkbox is checked, only show raid deaths
 
     if (levelFilter !== "all" && d.level) {
       if (levelFilter === "10-20" && (d.level < 1 || d.level > 20))

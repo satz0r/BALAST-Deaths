@@ -33,7 +33,7 @@ h3 {
 .header {
   text-align: center;
   padding: 20px;
-  border-radius: 15px;
+  border-radius: 2px;
   backdrop-filter: blur(10px);
 }
 
@@ -59,7 +59,7 @@ h3 {
   font-size: 1.2em;
   color: #ff6b6b;
   background: rgba(255, 107, 107, 0.1);
-  border-radius: 10px;
+  border-radius: 2px;
   margin: 20px 0;
 }
 
@@ -78,7 +78,7 @@ h3 {
 .stat-card {
   background: none;
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 2px;
   text-align: center;
   /* border: 1px solid rgba(78, 205, 196, 0.3); */
   min-width: 120px;
@@ -110,6 +110,7 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  /* align-items: center; */
   gap: 8px;
   padding: 10px;
 }
@@ -123,15 +124,34 @@ h3 {
   display: none; /* Hide labels since we'll use placeholder text */
 }
 
+.checkbox-group label {
+  display: flex !important; /* Show label for checkbox */
+  align-items: center;
+  gap: 6px;
+  color: #4ecdc4;
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+}
+
+input[type="checkbox"] {
+  min-width: auto;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  margin: 0;
+  accent-color: #4ecdc4;
+  cursor: pointer;
+}
+
 select,
 input {
   padding: 6px 10px;
   border: 1px solid rgba(78, 205, 196, 0.3);
-  border-radius: 4px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.1);
   color: white;
   font-size: 13px;
-  min-width: 120px;
 }
 
 select option {
@@ -142,14 +162,13 @@ select option {
 .reset-filters-btn {
   padding: 6px 12px;
   border: 1px solid rgba(255, 107, 107, 0.3);
-  border-radius: 4px;
+  border-radius: 2px;
   background: rgba(255, 107, 107, 0.1);
   color: #ff6b6b;
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s ease;
   font-weight: 400;
-  min-width: 100px;
 }
 
 .reset-filters-btn:hover {
@@ -162,7 +181,7 @@ select option {
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 2px;
   cursor: pointer;
   margin-top: 15px;
   font-size: 14px;
@@ -179,7 +198,7 @@ select option {
 .charts-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 10px;
   position: relative;
 }
 
@@ -187,17 +206,27 @@ select option {
   flex: 1 1 calc((100% - 20px) / 2);
   min-width: 300px;
   background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 10px;
+  padding: 10px;
+  border-radius: 2px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-sizing: border-box;
   position: relative;
-  /* Remove problematic overflow settings */
+  transition: all 0.3s ease; /* Smooth transitions for size changes */
+}
+
+/* Dynamic container sizing based on data volume */
+.chart-container.compact {
+  flex: 1 1 calc((100% - 30px) / 3); /* Smaller for low-data charts */
+  min-width: 250px;
+}
+
+.chart-container.expanded {
+  flex: 1 1 100%; /* Full width for data-heavy charts */
+  min-width: unset;
 }
 
 .chart-container svg {
-  /* Allow SVG content to be fully visible */
   overflow: visible;
 }
 
@@ -211,7 +240,7 @@ select option {
   flex: 1 1 100%;
   width: 100%;
   margin: 0;
-  padding: 20px 20px 20px 20px; /* Restore padding to match other containers */
+  padding: 20px 20px 20px 20px;
 }
 
 /* =================================
@@ -220,7 +249,7 @@ select option {
 .character-list-container {
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 2px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   margin-bottom: 30px;
@@ -237,11 +266,11 @@ select option {
 }
 
 .character-list-back-button {
-  background: #4ecdc4;
+  background: #2f8681;
   color: white;
   border: none;
   padding: 6px 12px; /* Reduced from 8px 16px */
-  border-radius: 4px; /* Reduced from 5px */
+  border-radius: 2px; /* Reduced from 5px */
   cursor: pointer;
   transition: background 0.2s ease;
   font-size: 13px; /* Added smaller font size */
@@ -255,8 +284,7 @@ select option {
   padding: 6px 8px; /* Reduced from 10px 12px */
   margin: 2px 0; /* Reduced from 3px 0 */
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px; /* Reduced from 5px */
-  border-left: 3px solid #45b7d1; /* Reduced from 4px */
+  border-radius: 2px; /* Reduced from 5px */
   cursor: pointer;
   transition: background 0.2s;
 }
@@ -273,13 +301,16 @@ select option {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  flex-wrap: wrap;
-  gap: 5px; /* Added gap for better spacing */
+  flex-wrap: nowrap; /* Changed from wrap to nowrap */
+  gap: 5px;
+  min-height: 32px; /* Set a consistent minimum height */
 }
 
 .character-item-main {
   flex: 1;
-  min-width: 150px; /* Reduced from 200px for better mobile fit */
+  min-width: 120px; /* Reduced from 150px for better mobile fit */
+  max-width: calc(100% - 80px); /* Ensure space for meta column */
+  overflow: hidden; /* Prevent overflow */
 }
 
 .character-item-name {
@@ -289,9 +320,13 @@ select option {
 }
 
 .character-item-details {
-  font-size: 0.8em; /* Reduced from 0.85em */
+  font-size: 0.75em; /* Reduced from 0.8em */
   color: #999;
-  line-height: 1.2; /* Added for better spacing */
+  line-height: 1.1; /* Reduced from 1.2 */
+  white-space: nowrap; /* Prevent wrapping to new line */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Show ... for long text */
+  max-width: 100%; /* Ensure it doesn't exceed container */
 }
 
 .character-item-location {
@@ -310,16 +345,20 @@ select option {
   text-align: right;
   margin-left: 8px; /* Reduced from 10px */
   flex-shrink: 0; /* Prevent shrinking on mobile */
+  width: 75px; /* Increased slightly to accommodate compact date */
+  min-width: 75px; /* Ensure minimum width */
 }
 
 .character-item-date {
   color: #e6e6e6ff;
   font-size: 0.8em; /* Reduced from 0.9em */
+  white-space: nowrap; /* Prevent line wrapping */
 }
 
 .character-item-level {
   font-weight: bold;
   font-size: 0.8em; /* Reduced from 0.9em */
+  white-space: nowrap; /* Prevent line wrapping */
 }
 
 /* Enhanced tooltip styles */
@@ -330,7 +369,7 @@ select option {
   background: rgba(30, 30, 30, 0.95);
   color: #fff;
   padding: 10px 14px;
-  border-radius: 6px;
+  border-radius: 2px;
   font-size: 13px;
   line-height: 1.4;
   opacity: 0;
@@ -420,7 +459,7 @@ select option {
   color: white;
   padding: 10px 20px;
   text-decoration: none;
-  border-radius: 25px;
+  border-radius: 2px;
   font-weight: bold;
   transition: opacity 0.3s;
   z-index: 1000; /* Lower than tooltip */
@@ -469,14 +508,22 @@ select option {
   select,
   input {
     font-size: 12px;
-    min-width: 100px;
     padding: 5px 8px;
+  }
+
+  .checkbox-group label {
+    font-size: 12px;
+    gap: 4px;
+  }
+
+  input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
   }
 
   .reset-filters-btn {
     font-size: 12px;
     padding: 5px 10px;
-    min-width: 80px;
   }
 
   /* Character list mobile styles */
@@ -488,15 +535,17 @@ select option {
   .character-item {
     padding: 4px 6px;
     margin: 1px 0;
-    border-left-width: 2px;
   }
 
   .character-item-content {
     gap: 3px;
+    flex-wrap: nowrap; /* Keep items on same line */
+    min-height: 28px; /* Smaller min height for mobile */
   }
 
   .character-item-main {
-    min-width: 120px;
+    min-width: 100px; /* Reduced for mobile */
+    max-width: calc(100% - 75px); /* Adjusted for new meta width */
   }
 
   .character-item-name {
@@ -504,11 +553,13 @@ select option {
   }
 
   .character-item-details {
-    font-size: 0.75em;
+    font-size: 0.7em; /* Smaller on mobile */
   }
 
   .character-item-meta {
     margin-left: 5px;
+    width: 70px; /* Adjusted for mobile */
+    min-width: 70px;
   }
 
   .character-item-date,
@@ -553,14 +604,22 @@ select option {
   select,
   input {
     font-size: 11px;
-    min-width: 85px;
     padding: 4px 6px;
+  }
+
+  .checkbox-group label {
+    font-size: 11px;
+    gap: 3px;
+  }
+
+  input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
   }
 
   .reset-filters-btn {
     font-size: 11px;
     padding: 4px 8px;
-    min-width: 70px;
   }
 
   /* Character list ultra-compact mobile styles */
@@ -572,17 +631,19 @@ select option {
   .character-item {
     padding: 3px 4px;
     margin: 1px 0;
-    border-radius: 3px;
+    border-radius: 2px;
   }
 
   .character-item-content {
-    flex-direction: column; /* Stack on very small screens */
+    flex-direction: row; /* Keep horizontal on small screens */
     gap: 2px;
+    flex-wrap: nowrap; /* Ensure no wrapping */
+    min-height: 26px; /* Even smaller for very small screens */
   }
 
   .character-item-main {
-    min-width: auto;
-    width: 100%;
+    min-width: 80px; /* Very compact for small screens */
+    max-width: calc(100% - 65px); /* Adjusted for small screen meta width */
   }
 
   .character-item-name {
@@ -591,20 +652,19 @@ select option {
   }
 
   .character-item-details {
-    font-size: 0.7em;
+    font-size: 0.65em; /* Very small on tiny screens */
   }
 
   .character-item-meta {
     margin-left: 0;
-    text-align: left; /* Align left when stacked */
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
+    text-align: right; /* Keep right aligned */
+    width: 60px; /* Compact for very small screens */
+    min-width: 60px;
   }
 
   .character-item-date,
   .character-item-level {
-    font-size: 0.7em;
+    font-size: 0.7em; /* Smaller on very small screens */
   }
 
   .character-list-back-button {
@@ -661,7 +721,7 @@ svg {
 .chart-error {
   background: rgba(255, 107, 107, 0.1);
   border: 1px solid #ff6b6b;
-  border-radius: 5px;
+  border-radius: 2px;
   text-align: center;
   padding: 40px;
   color: #ff6b6b;

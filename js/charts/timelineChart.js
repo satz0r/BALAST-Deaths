@@ -4,9 +4,14 @@ function createTimelineChart() {
     g,
     width: containerWidth,
     height,
+    svg,
   } = createBaseChart("#timelineChart", 360, true, customMargins);
 
   const width = Math.max(containerWidth, MIN_TIMELINE_WIDTH);
+
+  // Update SVG width to accommodate the full chart width including margins
+  const totalSVGWidth = width + customMargins.left + customMargins.right;
+  svg.attr("width", totalSVGWidth);
 
   // Set consistent date range: Nov 1, 2024 to end of current month
   const minDate = new Date(2024, 10, 1); // November 1, 2024 (month is 0-indexed)

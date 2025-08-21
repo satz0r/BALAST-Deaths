@@ -206,7 +206,6 @@ select option {
   flex: 1 1 calc((100% - 16px) / 2); /* Adjusted for smaller gap */
   min-width: 300px;
   background: none; /* Remove visible container */
-  padding: 8px; /* Reduced from 10px */
   border-radius: 0;
   backdrop-filter: none;
   border: none; /* Remove border */
@@ -221,13 +220,42 @@ select option {
 }
 
 .chart-container h3 {
-  margin: 0 0 12px 0; /* Reduced from 20px */
+  margin: 0 0 2px 0; /* Reduced from 20px */
+  padding: 2px 2px; /* Match master list header padding */
   color: #4ecdc4;
   text-align: center;
   font-size: 0.9em; /* Slightly smaller */
-  padding: 6px 8px; /* Add minimal padding to header */
-  background: rgba(255, 255, 255, 0.05); /* Subtle background for header */
+  border-radius: 3px; /* Match master list header border-radius */
+  position: relative; /* For positioning reset button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-reset-button {
+  position: absolute;
+  left: 8px;
+  background: #ff4444;
+  color: white;
+  border: none;
   border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  font-size: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.chart-reset-button:hover {
+  background: #ff6666;
+}
+
+.chart-reset-button::before {
+  content: "✕";
+  font-weight: bold;
 }
 
 .full-width {
@@ -242,9 +270,8 @@ select option {
    ================================= */
 .dashboard-content {
   display: grid;
-  grid-template-columns: 1fr 420px; /* Slightly wider for master list */
+  grid-template-columns: 420px 1fr; /* Master list on left, charts on right */
   gap: 10px; /* Reduced from 20px */
-  margin-top: 10px; /* Reduced from 20px */
 }
 
 .master-list-container {
@@ -259,13 +286,12 @@ select option {
 }
 
 .master-list-container h3 {
-  margin: 0 0 8px 0; /* Reduced margin */
+  margin: 0 0 2px 0; /* Match chart header margin */
+  padding: 2px 2px; /* Match chart header padding */
   color: #4ecdc4;
-  text-align: left; /* Left align instead of center */
-  font-size: 0.9em; /* Slightly smaller */
-  padding: 8px 12px; /* Add some padding to header only */
-  background: rgba(255, 255, 255, 0.05); /* Subtle background for header */
-  border-radius: 3px;
+  text-align: center; /* Center align to match charts */
+  font-size: 0.9em; /* Match chart header size */
+  border-radius: 3px; /* Match chart header border-radius */
 }
 
 #filtered-count {

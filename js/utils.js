@@ -150,3 +150,29 @@ function addCacheClearButton() {
     errorDiv.appendChild(clearButton);
   }
 }
+
+/**
+ * Add or remove reset button from chart header based on filter state
+ */
+function updateChartResetButton(titleId, filterType, currentFilterValue) {
+  const titleElement = document.getElementById(titleId);
+  if (!titleElement) return;
+
+  // Remove existing reset button
+  const existingButton = titleElement.querySelector(".chart-reset-button");
+  if (existingButton) {
+    existingButton.remove();
+  }
+
+  // Add reset button if filter is active (not "all")
+  if (currentFilterValue && currentFilterValue !== "all") {
+    const resetButton = document.createElement("button");
+    resetButton.className = "chart-reset-button";
+    resetButton.title = "Reset filter";
+    resetButton.onclick = () => {
+      updateFilter(filterType, "all");
+    };
+
+    titleElement.insertBefore(resetButton, titleElement.firstChild);
+  }
+}

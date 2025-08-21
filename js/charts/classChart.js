@@ -1,17 +1,11 @@
 function createClassChart() {
-  const classFilter = d3.select("#classFilter").node().value;
-  const titleElement = d3.select("#classChartTitle");
-
-  // If a specific class is selected, show character list instead of chart
-  if (classFilter !== "all") {
-    titleElement.text(`${classFilter} Characters`);
-    createClassCharacterList();
-    return;
-  }
-
-  titleElement.text("Deaths by Class");
-
-  const { g, width, height } = createBaseChart("#classChart", 300, true);
+  const customMargins = { top: 20, right: 20, bottom: 50, left: 40 }; // Reduced bottom from 80 to 50
+  const { g, width, height } = createBaseChart(
+    "#classChart",
+    300,
+    true,
+    customMargins
+  );
 
   const classCounts = d3.rollup(
     filteredData.filter((d) => d.class),
@@ -77,19 +71,4 @@ function createClassChart() {
         .ticks(getSmartTickCount(maxCount))
         .tickFormat(d3.format("d"))
     );
-}
-
-function createClassCharacterList() {
-  const classFilter = d3.select("#classFilter").node().value;
-  const classData = filteredData.filter((d) => d.class === classFilter);
-
-  createCharacterList({
-    containerId: "#classChart",
-    filterType: "classFilter",
-    filterValue: classFilter,
-    data: classData,
-    borderColor: classColors[classFilter] || "#666",
-    backButtonText: "← Back to Class Chart",
-    getAdditionalInfo: CharacterListHelpers.getClassChartInfo,
-  });
 }

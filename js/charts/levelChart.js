@@ -1,16 +1,4 @@
 function createLevelChart() {
-  const levelFilter = d3.select("#levelFilter").node().value;
-  const titleElement = d3.select("#levelChartTitle");
-
-  // If a specific level range is selected, show character list instead of chart
-  if (levelFilter !== "all") {
-    titleElement.text(`Level ${levelFilter} Deaths`);
-    createLevelCharacterList();
-    return;
-  }
-
-  titleElement.text("Deaths by Level");
-
   const { g, width, height } = createBaseChart("#levelChart", 300, false);
 
   const levelData = filteredData.filter((d) => d.level);
@@ -82,31 +70,4 @@ function createLevelChart() {
         .ticks(getSmartTickCount(maxCount))
         .tickFormat(d3.format("d"))
     );
-}
-
-function createLevelCharacterList() {
-  const levelFilter = d3.select("#levelFilter").node().value;
-
-  let levelData = [];
-  if (levelFilter === "10-20") {
-    levelData = filteredData.filter((d) => d.level >= 1 && d.level <= 20);
-  } else if (levelFilter === "21-40") {
-    levelData = filteredData.filter((d) => d.level >= 21 && d.level <= 40);
-  } else if (levelFilter === "41-59") {
-    levelData = filteredData.filter((d) => d.level >= 41 && d.level <= 59);
-  } else if (levelFilter === "60") {
-    levelData = filteredData.filter((d) => d.level === 60);
-  }
-
-  const levelRangeColor = levelRangeColors[levelFilter] || "#45b7d1";
-
-  createCharacterList({
-    containerId: "#levelChart",
-    filterType: "levelFilter",
-    filterValue: levelFilter,
-    data: levelData,
-    borderColor: levelRangeColor,
-    backButtonText: "← Back to Level Chart",
-    getAdditionalInfo: CharacterListHelpers.getLevelChartInfo,
-  });
 }

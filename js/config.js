@@ -99,5 +99,5 @@ function getDeathCauseColor(deathCause) {
 
 // Chart constants
 const MAX_BAR_WIDTH = 40;
-const MAX_BAR_HEIGHT = 25; // Reduced from 40 to 25 for more compact bars
+const MAX_BAR_HEIGHT = 18; // Reduced from 25 to 18 for more compact bars to fit more entries
 const MIN_TIMELINE_WIDTH = 800;

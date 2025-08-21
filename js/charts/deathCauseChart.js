@@ -1,16 +1,4 @@
 function createDeathCauseChart() {
-  const deathCauseFilter = d3.select("#deathCauseFilter").node().value;
-  const titleElement = d3.select("#deathCauseChartTitle");
-
-  // If a specific death cause is selected, show character list instead of chart
-  if (deathCauseFilter !== "all") {
-    titleElement.text(`Deaths by: ${deathCauseFilter}`);
-    createDeathCauseCharacterList();
-    return;
-  }
-
-  titleElement.text("Cause of Death");
-
   const deathCauseCounts = d3.rollup(
     filteredData.filter((d) => d.death_cause),
     (v) => v.length,
@@ -25,14 +13,22 @@ function createDeathCauseChart() {
     })
   )
     .sort((a, b) => b.count - a.count)
-    .slice(0, 15); // Increased from 10 to 15
+    .slice(0, 20); // Increased from 15 to 20 to show more entries with tighter spacing
 
   const leftMargin = calculateLeftMargin(deathCauseData, "death_cause");
   const customMargins = { top: 20, right: 30, bottom: 40, left: leftMargin };
 
+  // Calculate dynamic height based on number of entries
+  const minHeight = 200; // Minimum height for small datasets
+  const barHeight = 22; // Reduced from 30 to 22 for tighter spacing
+  const dynamicHeight = Math.max(
+    minHeight,
+    deathCauseData.length * barHeight + customMargins.top + customMargins.bottom
+  );
+
   const { g, width, height } = createBaseChart(
     "#deathCauseChart",
-    500, // Increased height from 400 to 500
+    dynamicHeight, // Use dynamic height instead of fixed 500
     false,
     customMargins
   );
@@ -41,7 +37,7 @@ function createDeathCauseChart() {
     .scaleBand()
     .domain(deathCauseData.map((d) => d.death_cause))
     .range([0, height])
-    .padding(0.1);
+    .padding(0.05); // Reduced from 0.1 to 0.05 for tighter spacing
 
   const maxCount = d3.max(deathCauseData, (d) => d.count) || 1;
   const x = d3.scaleLinear().domain([0, maxCount]).range([0, width]);
@@ -97,21 +93,12 @@ function createDeathCauseChart() {
         .ticks(getSmartTickCount(maxCount))
         .tickFormat(d3.format("d"))
     );
-}
 
-function createDeathCauseCharacterList() {
+  // Add reset button if filter is active
   const deathCauseFilter = d3.select("#deathCauseFilter").node().value;
-  const deathCauseData = filteredData.filter(
-    (d) => d.death_cause === deathCauseFilter
+  updateChartResetButton(
+    "deathCauseChartTitle",
+    "deathCauseFilter",
+    deathCauseFilter
   );
-
-  createCharacterList({
-    containerId: "#deathCauseChart",
-    filterType: "deathCauseFilter",
-    filterValue: deathCauseFilter,
-    data: deathCauseData,
-    borderColor: getDeathCauseColor(deathCauseFilter), // Use death cause-specific color
-    backButtonText: "← Back to Death Cause Chart",
-    getAdditionalInfo: CharacterListHelpers.getDeathCauseChartInfo,
-  });
 }

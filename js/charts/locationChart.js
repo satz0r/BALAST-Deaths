@@ -1,16 +1,4 @@
 function createLocationChart() {
-  const locationFilter = d3.select("#locationFilter").node().value;
-  const titleElement = d3.select("#locationChartTitle");
-
-  // If a specific location is selected, show character list instead of chart
-  if (locationFilter !== "all") {
-    titleElement.text(`Deaths in: ${locationFilter}`);
-    createLocationCharacterList();
-    return;
-  }
-
-  titleElement.text("Most Dangerous Locations");
-
   const locationCounts = d3.rollup(
     filteredData.filter((d) => d.location),
     (v) => v.length,
@@ -21,14 +9,22 @@ function createLocationChart() {
     count,
   }))
     .sort((a, b) => b.count - a.count)
-    .slice(0, 15); // Increased from 10 to 15
+    .slice(0, 20); // Increased from 15 to 20 to show more entries with tighter spacing
 
   const leftMargin = calculateLeftMargin(locationData);
   const customMargins = { top: 20, right: 30, bottom: 40, left: leftMargin };
 
+  // Calculate dynamic height based on number of entries
+  const minHeight = 200; // Minimum height for small datasets
+  const barHeight = 22; // Reduced from 30 to 22 for tighter spacing
+  const dynamicHeight = Math.max(
+    minHeight,
+    locationData.length * barHeight + customMargins.top + customMargins.bottom
+  );
+
   const { g, width, height } = createBaseChart(
     "#locationChart",
-    500, // Increased height from 400 to 500
+    dynamicHeight, // Use dynamic height instead of fixed 500
     false,
     customMargins
   );
@@ -37,7 +33,7 @@ function createLocationChart() {
     .scaleBand()
     .domain(locationData.map((d) => d.loc))
     .range([0, height])
-    .padding(0.1);
+    .padding(0.05); // Reduced from 0.1 to 0.05 for tighter spacing
 
   const maxCount = d3.max(locationData, (d) => d.count) || 1;
   const x = d3.scaleLinear().domain([0, maxCount]).range([0, width]);
@@ -88,21 +84,12 @@ function createLocationChart() {
         .ticks(getSmartTickCount(maxCount))
         .tickFormat(d3.format("d"))
     );
-}
 
-function createLocationCharacterList() {
+  // Add reset button if filter is active
   const locationFilter = d3.select("#locationFilter").node().value;
-  const locationData = filteredData.filter(
-    (d) => d.location === locationFilter
+  updateChartResetButton(
+    "locationChartTitle",
+    "locationFilter",
+    locationFilter
   );
-
-  createCharacterList({
-    containerId: "#locationChart",
-    filterType: "locationFilter",
-    filterValue: locationFilter,
-    data: locationData,
-    borderColor: getLocationColor(locationFilter), // Use location-specific color
-    backButtonText: "← Back to Location Chart",
-    getAdditionalInfo: CharacterListHelpers.getLocationChartInfo,
-  });
 }

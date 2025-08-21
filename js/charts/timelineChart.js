@@ -1,5 +1,5 @@
 function createTimelineChart() {
-  const customMargins = { top: 20, right: 80, bottom: 80, left: 60 };
+  const customMargins = { top: 20, right: 80, bottom: 50, left: 60 }; // Reduced bottom from 80 to 50
   const {
     g,
     width: containerWidth,

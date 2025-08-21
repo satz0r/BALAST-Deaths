@@ -1,31 +1,33 @@
+// Cache configuration
+const CACHE_KEY = 'wow_deaths_cache';
+const CACHE_TIME_KEY = 'wow_deaths_cache_time';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 async function loadData() {
   try {
+    // Check cache first
+    const cached = localStorage.getItem(CACHE_KEY);
+    const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
+    
+    if (cached && cacheTime && (Date.now() - parseInt(cacheTime)) < CACHE_DURATION) {
+      console.log("Loading data from cache");
+      const cachedDeaths = JSON.parse(cached);
+      processDataAndInitialize(cachedDeaths);
+      return;
+    }
+
+    console.log("Loading fresh data from database");
     const { data: deaths, error } = await sb
       .from("guild_deaths")
       .select("*")
       .order("death_date", { ascending: true });
     if (error) throw error;
 
-    data = deaths.map((d) => ({
-      ...d,
-      date: new Date(d.death_date),
-      level: d.level || null,
-      class: d.class || null,
-      location: d.zone || null,
-      death_cause: d.death_cause || null,
-      isRaid: d.is_raid || false,
-      characterName: d.character_name || "Unknown",
-    }));
-    filteredData = [...data];
+    // Cache the fresh data
+    localStorage.setItem(CACHE_KEY, JSON.stringify(deaths));
+    localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
 
-    tooltip = d3.select("#tooltip");
-
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("dashboard-content").style.display = "block";
-
-    populateFilters();
-    updateStats();
-    createCharts();
+    processDataAndInitialize(deaths);
   } catch (error) {
     console.error("Error loading data:", error);
     document.getElementById("loading").style.display = "none";
@@ -40,7 +42,33 @@ async function loadData() {
       </ul>
       <p><strong>Error:</strong> ${error.message}</p>
     `;
+    
+    // Add cache clear button after a short delay
+    setTimeout(addCacheClearButton, 100);
   }
+}
+
+function processDataAndInitialize(deaths) {
+  data = deaths.map((d) => ({
+    ...d,
+    date: new Date(d.death_date),
+    level: d.level || null,
+    class: d.class || null,
+    location: d.zone || null,
+    death_cause: d.death_cause || null,
+    isRaid: d.is_raid || false,
+    characterName: d.character_name || "Unknown",
+  }));
+  filteredData = [...data];
+
+  tooltip = d3.select("#tooltip");
+
+  document.getElementById("loading").style.display = "none";
+  document.getElementById("dashboard-content").style.display = "block";
+
+  populateFilters();
+  updateStats();
+  createCharts();
 }
 
 function populateFilters() {
@@ -71,11 +99,11 @@ function populateFilters() {
     deathCauseSelect.append("option").attr("value", cause).text(cause);
   });
 
-  d3.select("#classFilter").on("change", updateDashboard);
-  d3.select("#levelFilter").on("change", updateDashboard);
-  d3.select("#locationFilter").on("change", updateDashboard);
-  d3.select("#deathCauseFilter").on("change", updateDashboard);
-  d3.select("#raidFilter").on("change", updateDashboard);
+  d3.select("#classFilter").on("change", debouncedUpdateDashboard);
+  d3.select("#levelFilter").on("change", debouncedUpdateDashboard);
+  d3.select("#locationFilter").on("change", debouncedUpdateDashboard);
+  d3.select("#deathCauseFilter").on("change", debouncedUpdateDashboard);
+  d3.select("#raidFilter").on("change", debouncedUpdateDashboard);
   d3.select("#resetFilters").on("click", resetAllFilters);
 }
 

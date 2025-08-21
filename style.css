@@ -348,3 +348,20 @@ svg {
 #timelineChart svg {
   min-width: 800px; /* Same as MIN_TIMELINE_WIDTH */
 }
+
+/* Chart loading and error states */
+.chart-loading {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.chart-error {
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid #ff6b6b;
+  border-radius: 5px;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}

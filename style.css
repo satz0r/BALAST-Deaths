@@ -70,37 +70,27 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 15px;
-  margin-bottom: 10px;
-  padding: 10px 0;
-}
-
-.stat-card {
-  background: none;
-  padding: 8px 12px;
-  border-radius: 2px;
-  text-align: center;
-  /* border: 1px solid rgba(78, 205, 196, 0.3); */
-  min-width: 120px;
-  flex: 0 1 auto;
-  display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 20px;
+  padding: 15px;
+  text-align: center;
+  line-height: 1.4;
 }
 
-.stat-card h3 {
-  margin: 0;
-  color: #4ecdc4;
+.stat-item {
+  white-space: nowrap;
   font-size: 0.9em;
-  font-weight: 300;
-  display: inline;
 }
 
-.stat-card .value {
-  font-size: 1.1em;
-  color: #ff6b6b;
+.stat-item .stat-label {
+  color: #4ecdc4;
   font-weight: 500;
-  display: inline;
+  margin-right: 4px;
+}
+
+.stat-item .stat-value {
+  color: #ff6b6b;
+  font-weight: bold;
 }
 
 /* =================================
@@ -203,15 +193,50 @@ select option {
 }
 
 .chart-container {
-  flex: 1 1 calc((100% - 16px) / 2); /* Adjusted for smaller gap */
-  min-width: 300px;
   background: none; /* Remove visible container */
   border-radius: 0;
   backdrop-filter: none;
   border: none; /* Remove border */
   box-sizing: border-box;
   position: relative;
-  /* Remove problematic overflow settings */
+  /* Default flex properties - will be overridden by specific selectors */
+}
+
+/* Timeline - appears first and takes full width */
+.timeline-chart.full-width {
+  order: 1;
+  flex: 1 1 100%;
+  width: 100%;
+  margin: 0;
+  padding: 8px;
+}
+
+/* Class chart - appears second (left side of row 2) */
+.class-chart {
+  order: 2;
+  flex: 1 1 calc((100% - 8px) / 2);
+  min-width: 280px;
+}
+
+/* Level chart - appears third (right side of row 2) */
+.level-chart {
+  order: 3;
+  flex: 1 1 calc((100% - 8px) / 2);
+  min-width: 280px;
+}
+
+/* Location chart - appears fourth (left side of row 3) */
+.location-chart {
+  order: 4;
+  flex: 1 1 calc((100% - 8px) / 2);
+  min-width: 280px;
+}
+
+/* Death cause chart - appears fifth (right side of row 3) */
+.death-cause-chart {
+  order: 5;
+  flex: 1 1 calc((100% - 8px) / 2);
+  min-width: 280px;
 }
 
 .chart-container svg {
@@ -231,7 +256,12 @@ select option {
   align-items: center;
   justify-content: center;
 }
-
+.chart-container h4 {
+  margin: 0;
+  padding: 2px 2px;
+  color: #4ecdc4;
+  font-size: 0.8em; /* Smaller font size for subheadings */
+}
 .chart-reset-button {
   position: absolute;
   left: 8px;
@@ -257,6 +287,9 @@ select option {
   content: "✕";
   font-weight: bold;
 }
+
+/* Combined Level Chart and Stats Layout - REMOVED */
+/* .level-and-stats styles removed since we're separating them */
 
 .full-width {
   flex: 1 1 100%;
@@ -562,25 +595,14 @@ select option {
   }
 
   .stats-overview {
-    gap: 8px;
+    gap: 15px;
     margin-bottom: 15px;
-    padding: 5px 0;
+    padding: 10px 0;
+    flex-direction: column;
   }
 
-  .stat-card {
-    min-width: 100px;
-    padding: 6px 8px;
-    border-width: 1px;
-    gap: 4px;
-  }
-
-  .stat-card h3 {
-    font-size: 0.8em;
-    margin: 0;
-  }
-
-  .stat-card .value {
-    font-size: 1em;
+  .stat-item {
+    font-size: 0.85em;
   }
 
   .controls {
@@ -648,25 +670,14 @@ select option {
 
 @media (max-width: 480px) {
   .stats-overview {
-    gap: 6px;
+    gap: 10px;
     margin-bottom: 10px;
-    padding: 3px 0;
+    padding: 8px 0;
+    flex-direction: column;
   }
 
-  .stat-card {
-    min-width: 80px;
-    padding: 4px 6px;
-    border-width: 1px;
-    gap: 3px;
-  }
-
-  .stat-card h3 {
-    font-size: 0.75em;
-    margin: 0;
-  }
-
-  .stat-card .value {
-    font-size: 0.9em;
+  .stat-item {
+    font-size: 0.8em;
   }
 
   .controls {
@@ -801,5 +812,51 @@ svg {
   }
   100% {
     opacity: 0.6;
+  }
+}
+
+/* =================================
+   RESPONSIVE FLEXBOX BREAKPOINTS
+   ================================= */
+
+/* Large screens (1200px+) - 2 charts per row after timeline */
+@media (min-width: 1200px) {
+  .chart-container:not(.full-width) {
+    flex: 1 1 calc((100% - 8px) / 2);
+  }
+}
+
+/* Medium screens (768px - 1199px) - 2 charts per row */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .dashboard-content {
+    grid-template-columns: 350px 1fr; /* Smaller master list */
+  }
+
+  .chart-container:not(.full-width) {
+    flex: 1 1 calc((100% - 8px) / 2);
+    min-width: 250px;
+  }
+}
+
+/* Small screens (below 768px) - Single column */
+@media (max-width: 767px) {
+  .dashboard-content {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .master-list-container {
+    max-height: 300px; /* Limit height on mobile */
+  }
+
+  .charts-container {
+    flex-direction: column;
+  }
+
+  .chart-container,
+  .chart-container.full-width {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: auto;
   }
 }

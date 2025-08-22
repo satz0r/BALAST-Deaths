@@ -42,11 +42,11 @@ function updateStats() {
     Array.from(zoneCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
 
   const statsHtml = `
-    <div class="stat-card"><h3>Total Deaths:</h3><div class="value">${totalDeaths}</div></div>
-    <div class="stat-card"><h3>Top Killer:</h3><div class="value">${deathCause}</div></div>
-    <div class="stat-card"><h3>Raid Deaths:</h3><div class="value">${raidDeaths}</div></div>
-    <div class="stat-card"><h3>Days Without Death:</h3><div class="value">${daysWithoutDeath}</div></div>
-    <div class="stat-card"><h3>Deadliest Zone:</h3><div class="value">${deadliestZone}</div></div>
+    <div class="stat-item"><span class="stat-label">Total Deaths:</span><span class="stat-value">${totalDeaths}</span></div>
+    <div class="stat-item"><span class="stat-label">Top Killer:</span><span class="stat-value">${deathCause}</span></div>
+    <div class="stat-item"><span class="stat-label">Raid Deaths:</span><span class="stat-value">${raidDeaths}</span></div>
+    <div class="stat-item"><span class="stat-label">Days Without Death:</span><span class="stat-value">${daysWithoutDeath}</span></div>
+    <div class="stat-item"><span class="stat-label">Deadliest Zone:</span><span class="stat-value">${deadliestZone}</span></div>
   `;
   d3.select("#stats-overview").html(statsHtml);
 }

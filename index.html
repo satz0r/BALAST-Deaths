@@ -79,6 +79,8 @@
             </button>
           </div>
         </div>
+
+        <!-- Stats Overview -->
         <div class="stats-overview" id="stats-overview">
           <!-- Stats will be populated here -->
         </div>
@@ -88,25 +90,24 @@
             <h3>All Deaths <span id="filtered-count">(0)</span></h3>
             <div id="master-character-list"></div>
           </div>
-
           <div class="charts-container">
-            <div class="chart-container">
-              <h3 id="classChartTitle">Deaths by Class</h3>
-              <div id="classChart"></div>
-            </div>
-            <div class="chart-container">
-              <h3 id="levelChartTitle">Deaths by Level Range</h3>
-              <div id="levelChart"></div>
-            </div>
-            <div class="chart-container full-width">
+            <div class="chart-container full-width timeline-chart">
               <h3>Death Timeline</h3>
               <div id="timelineChart"></div>
             </div>
-            <div class="chart-container">
+            <div class="chart-container class-chart">
+              <h3 id="classChartTitle">Deaths by Class</h3>
+              <div id="classChart"></div>
+            </div>
+            <div class="chart-container level-chart">
+              <h3 id="levelChartTitle">Deaths by Level Range</h3>
+              <div id="levelChart"></div>
+            </div>
+            <div class="chart-container location-chart">
               <h3 id="locationChartTitle">Most Dangerous Locations</h3>
               <div id="locationChart"></div>
             </div>
-            <div class="chart-container">
+            <div class="chart-container death-cause-chart">
               <h3 id="deathCauseChartTitle">Cause of Death</h3>
               <div id="deathCauseChart"></div>
             </div>

@@ -1,5 +1,5 @@
 function createLevelChart() {
-  const { g, width, height } = createBaseChart("#levelChart", 300, false);
+  const { g, width, height } = createBaseChart("#levelChart", 300, false); // Increased back to 300 to match class chart
 
   const levelData = filteredData.filter((d) => d.level);
   const ranges = [

@@ -1,12 +1,65 @@
 /* =================================
+   CSS CUSTOM PROPERTIES (VARIABLES)
+   ================================= */
+:root {
+  /* Font sizes - responsive typography scale */
+  --font-size-header: 0.9em;
+  --font-size-sub: 0.8em;
+  --font-size-compact: 0.7em;
+  --font-size-ultra: 0.6em;
+  --font-size-micro: 0.65em;
+  --font-size-nav: 0.7em;
+
+  /* Colors - design system */
+  --color-primary: #4ecdc4;
+  --color-secondary: #ff6b6b;
+  --color-background-start: #1a1a2e;
+  --color-background-end: #16213e;
+  --color-text-primary: #ffffff;
+  --color-text-muted: #e6e6e6;
+  --color-text-dark: #1a2332;
+  --color-blue: #45b7d1;
+
+  /* Spacing system */
+  --gap-xs: 2px;
+  --gap-sm: 4px;
+  --gap-md: 8px;
+  --gap-lg: 10px;
+  --gap-xl: 20px;
+
+  /* Typography */
+  --letter-spacing-wide: 1px;
+
+  /* Spacing system */
+  --gap-xs: 2px;
+  --gap-sm: 4px;
+  --gap-md: 8px;
+  --gap-lg: 10px;
+  --gap-xl: 20px;
+
+  /* Character table grid templates */
+  --grid-char-table: 60px 30px 1fr 80px 80px;
+  --grid-char-table-tablet: 50px 25px 1fr 60px 60px;
+  --grid-char-table-mobile: 45px 20px 1fr 50px 50px;
+
+  /* Common border radius */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+}
+
+/* =================================
    BASE STYLES
    ================================= */
 body {
   font-family: "roboto", sans-serif;
   margin: 0;
   padding: 20px;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    var(--color-background-start) 0%,
+    var(--color-background-end) 100%
+  );
+  color: var(--color-text-primary);
   min-height: 100vh;
   position: relative !important;
   overflow-x: auto;
@@ -26,21 +79,21 @@ h1,
 h2,
 h3 {
   font: 200 1.2em "roboto", sans-serif;
-  color: #4ecdc4;
+  color: var(--color-primary);
   text-transform: uppercase;
 }
 
 .header {
   text-align: center;
   padding: 20px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   backdrop-filter: blur(10px);
 }
 
 .header h1 {
   margin: 0;
   font-size: 1.5em;
-  color: #4ecdc4;
+  color: var(--color-primary);
 }
 .balastLogo {
   max-width: 400px;
@@ -50,16 +103,16 @@ h3 {
   text-align: center;
   padding: 50px;
   font-size: 1.2em;
-  color: #4ecdc4;
+  color: var(--color-primary);
 }
 
 .error {
   text-align: center;
   padding: 50px;
   font-size: 1.2em;
-  color: #ff6b6b;
+  color: var(--color-secondary);
   background: rgba(255, 107, 107, 0.1);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   margin: 20px 0;
 }
 
@@ -71,7 +124,7 @@ h3 {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: var(--gap-xl);
   padding: 15px;
   text-align: center;
   line-height: 1.4;
@@ -79,18 +132,70 @@ h3 {
 
 .stat-item {
   white-space: nowrap;
-  font-size: 0.9em;
+  font-size: var(--font-size-header);
 }
 
 .stat-item .stat-label {
-  color: #4ecdc4;
+  color: var(--color-primary);
   font-weight: 500;
   margin-right: 4px;
 }
 
 .stat-item .stat-value {
-  color: #ff6b6b;
+  color: var(--color-secondary);
   font-weight: bold;
+}
+
+/* =================================
+   UTILITY CLASSES
+   ================================= */
+.font-header {
+  font-size: var(--font-size-header);
+}
+.font-sub {
+  font-size: var(--font-size-sub);
+}
+.font-compact {
+  font-size: var(--font-size-compact);
+}
+.font-ultra {
+  font-size: var(--font-size-ultra);
+}
+.font-micro {
+  font-size: var(--font-size-micro);
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+.overflow-y-auto {
+  overflow-y: auto;
+}
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.gap-xs {
+  gap: var(--gap-xs);
+}
+.gap-sm {
+  gap: var(--gap-sm);
+}
+.gap-md {
+  gap: var(--gap-md);
+}
+.gap-lg {
+  gap: var(--gap-lg);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+.text-secondary {
+  color: var(--color-secondary);
+}
+.text-muted {
+  color: var(--color-text-muted);
 }
 
 /* =================================
@@ -100,8 +205,7 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  /* align-items: center; */
-  gap: 8px;
+  gap: var(--gap-md);
   padding: 10px;
 }
 
@@ -118,7 +222,7 @@ h3 {
   display: flex !important; /* Show label for checkbox */
   align-items: center;
   gap: 6px;
-  color: #4ecdc4;
+  color: var(--color-primary);
   font-size: 13px;
   cursor: pointer;
   user-select: none;
@@ -130,7 +234,7 @@ input[type="checkbox"] {
   height: 16px;
   padding: 0;
   margin: 0;
-  accent-color: #4ecdc4;
+  accent-color: var(--color-primary);
   cursor: pointer;
 }
 
@@ -138,23 +242,23 @@ select,
 input {
   padding: 6px 10px;
   border: 1px solid rgba(78, 205, 196, 0.3);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background: rgba(255, 255, 255, 0.1);
   color: white;
   font-size: 13px;
 }
 
 select option {
-  background: #16213e;
+  background: var(--color-background-end);
   color: white;
 }
 
 .reset-filters-btn {
   padding: 6px 12px;
   border: 1px solid rgba(255, 107, 107, 0.3);
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   background: rgba(255, 107, 107, 0.1);
-  color: #ff6b6b;
+  color: var(--color-secondary);
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -163,15 +267,15 @@ select option {
 
 .reset-filters-btn:hover {
   background: rgba(255, 107, 107, 0.2);
-  border-color: #ff6b6b;
+  border-color: var(--color-secondary);
 }
 
 .cache-clear-btn {
-  background: #4ecdc4;
+  background: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   margin-top: 15px;
   font-size: 14px;
@@ -247,10 +351,10 @@ select option {
 .chart-container h3 {
   margin: 0 0 2px 0; /* Reduced from 20px */
   padding: 2px 2px; /* Match master list header padding */
-  color: #4ecdc4;
+  color: var(--color-primary);
   text-align: center;
   font-size: 0.9em; /* Slightly smaller */
-  border-radius: 3px; /* Match master list header border-radius */
+  border-radius: var(--radius-md); /* Match master list header border-radius */
   position: relative; /* For positioning reset button */
   display: flex;
   align-items: center;
@@ -259,7 +363,7 @@ select option {
 .chart-container h4 {
   margin: 0;
   padding: 2px 2px;
-  color: #4ecdc4;
+  color: var(--color-primary);
   font-size: 0.8em; /* Smaller font size for subheadings */
 }
 .chart-reset-button {
@@ -268,7 +372,7 @@ select option {
   background: #ff4444;
   color: white;
   border: none;
-  border-radius: 3px;
+  border-radius: var(--radius-md);
   width: 20px;
   height: 20px;
   font-size: 10px;
@@ -313,9 +417,12 @@ select option {
   padding: 0; /* Remove padding */
   height: fit-content;
   max-height: 85vh; /* Increased from 80vh */
-  overflow: hidden;
+  overflow: visible; /* Allow inner container to handle scrolling */
   backdrop-filter: none;
   border: none; /* Remove border */
+  width: 100%; /* Ensure full width */
+  max-width: 100vw; /* Never exceed viewport */
+  box-sizing: border-box; /* Include padding in width */
 }
 
 .master-list-container h3 {
@@ -324,11 +431,11 @@ select option {
   color: #4ecdc4;
   text-align: center; /* Center align to match charts */
   font-size: 0.9em; /* Match chart header size */
-  border-radius: 3px; /* Match chart header border-radius */
+  border-radius: var(--radius-md); /* Match chart header border-radius */
 }
 
 #filtered-count {
-  color: #ff6b6b;
+  color: var(--color-secondary);
   font-weight: bold;
 }
 
@@ -343,7 +450,7 @@ select option {
 .character-list-container {
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   margin-bottom: 30px;
@@ -364,7 +471,7 @@ select option {
   color: white;
   border: none;
   padding: 4px 8px; /* Further reduced */
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: background 0.2s ease;
   font-size: 11px; /* Smaller font */
@@ -377,14 +484,14 @@ select option {
 /* Character Table Header */
 .character-table-header {
   display: grid;
-  grid-template-columns: 65px 35px 1fr 1fr 1fr; /* Slightly smaller columns */
-  gap: 6px; /* Reduced from 8px */
-  padding: 6px 10px; /* Reduced padding */
-  background: rgba(78, 205, 196, 0.15); /* More subtle */
-  border: 1px solid rgba(78, 205, 196, 0.3); /* More subtle */
+  grid-template-columns: var(--grid-char-table);
+  gap: var(--gap-xs);
+  padding: var(--gap-xs) var(--gap-sm);
+  background: rgba(78, 205, 196, 0.15);
+  border: 1px solid rgba(78, 205, 196, 0.3);
   font-weight: bold;
-  font-size: 0.8em; /* Smaller font */
-  color: #4ecdc4;
+  font-size: var(--font-size-sub);
+  color: var(--color-primary);
 }
 
 .character-table-header > div:nth-child(2) {
@@ -394,11 +501,11 @@ select option {
 /* Character Table Rows */
 .character-item {
   display: grid;
-  grid-template-columns: 65px 35px 1fr 1fr 1fr; /* Match header */
-  gap: 6px; /* Reduced from 8px */
-  padding: 4px 10px; /* Reduced padding */
-  background: rgba(255, 255, 255, 0.03); /* More subtle */
-  border: 1px solid rgba(255, 255, 255, 0.05); /* More subtle */
+  grid-template-columns: var(--grid-char-table);
+  gap: var(--gap-xs);
+  padding: 3px var(--gap-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   cursor: pointer;
   transition: background 0.2s;
   align-items: center;
@@ -423,20 +530,20 @@ select option {
 
 /* Table Cell Styles */
 .character-table-date {
-  color: #e6e6e6;
-  font-size: 0.8em;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sub);
   white-space: nowrap;
 }
 
 .character-table-level {
   font-weight: bold;
-  font-size: 0.8em;
+  font-size: var(--font-size-sub);
   text-align: center;
 }
 
 .character-table-name {
   font-weight: 500;
-  font-size: 0.9em;
+  font-size: var(--font-size-header);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -444,7 +551,7 @@ select option {
 
 .character-table-location {
   color: #45b7d1;
-  font-size: 0.85em;
+  font-size: var(--font-size-compact);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -455,8 +562,8 @@ select option {
 }
 
 .character-table-cause {
-  color: #ff6b6b;
-  font-size: 0.85em;
+  color: var(--color-secondary);
+  font-size: var(--font-size-compact);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -470,12 +577,12 @@ select option {
   background: rgba(30, 30, 30, 0.95);
   color: #fff;
   padding: 10px 14px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   font-size: 13px;
   line-height: 1.4;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
-  border: 1px solid #4ecdc4;
+  border: 1px solid var(--color-primary);
   max-width: 250px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
   font-family: "roboto", sans-serif;
@@ -486,7 +593,7 @@ select option {
 }
 
 .tooltip strong {
-  color: #4ecdc4;
+  color: var(--color-primary);
   display: block;
   margin-bottom: 2px;
 }
@@ -508,12 +615,12 @@ select option {
 
 /* Style for right Y-axis (monthly deaths) */
 .axis-right text {
-  fill: #4ecdc4;
+  fill: var(--color-primary);
 }
 
 .axis-right path,
 .axis-right line {
-  stroke: #4ecdc4;
+  stroke: var(--color-primary);
   stroke-width: 1;
 }
 
@@ -556,11 +663,15 @@ select option {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  background: linear-gradient(
+    45deg,
+    var(--color-secondary),
+    var(--color-primary)
+  );
   color: white;
   padding: 10px 20px;
   text-decoration: none;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   font-weight: bold;
   transition: opacity 0.3s;
   z-index: 1000; /* Lower than tooltip */
@@ -571,38 +682,106 @@ select option {
 }
 
 /* =================================
-   RESPONSIVE DESIGN
+   UNIFIED RESPONSIVE DESIGN SYSTEM
    ================================= */
-@media (max-width: 768px) {
-  .chart-container {
-    flex: 1 1 100%;
-    min-width: unset;
+
+/* Large Desktop (1200px+) - Full 2-chart layout */
+@media (min-width: 1200px) {
+  .dashboard-content {
+    grid-template-columns: 420px 1fr; /* Full-size master list */
   }
 
-  /* Dashboard layout becomes single column on mobile */
+  .chart-container:not(.full-width) {
+    flex: 1 1 calc((100% - 8px) / 2);
+    min-width: 280px;
+  }
+}
+
+/* Medium Desktop (768px - 1199px) - Compact 2-chart layout */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .dashboard-content {
+    grid-template-columns: 350px 1fr; /* Smaller master list */
+  }
+
+  .chart-container:not(.full-width) {
+    flex: 1 1 calc((100% - 8px) / 2);
+    min-width: 250px;
+  }
+}
+
+/* Tablet Portrait (481px - 767px) - Single column layout */
+@media (max-width: 767px) {
   .dashboard-content {
     grid-template-columns: 1fr; /* Stack vertically */
-    gap: 8px; /* Reduced gap */
+    grid-template-rows: auto 1fr;
+    gap: 8px;
+    width: 100%; /* Full width */
+    max-width: 100vw; /* Never exceed viewport */
+    box-sizing: border-box; /* Include padding in width */
   }
 
   .master-list-container {
     order: -1; /* Master list first on mobile */
-    max-height: 350px; /* Smaller on mobile */
+    max-height: 300px;
+    width: 100%; /* Full width */
+    max-width: 100vw; /* Never exceed viewport */
+    overflow: hidden; /* Prevent horizontal overflow */
+    box-sizing: border-box; /* Include padding in width */
   }
 
   #master-character-list {
-    max-height: calc(350px - 40px);
+    max-height: calc(300px - 40px);
+    overflow-x: auto; /* Allow horizontal scroll if needed */
+    overflow-y: auto; /* Vertical scroll for list */
   }
 
-  .stats-overview {
-    gap: 15px;
-    margin-bottom: 15px;
-    padding: 10px 0;
+  .charts-container {
     flex-direction: column;
   }
 
+  /* Timeline fixes for tablet */
+  .timeline-chart.full-width {
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .chart-container,
+  .chart-container.full-width {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: auto;
+    max-width: 100%; /* Ensure it doesn't exceed viewport */
+    overflow: hidden; /* Prevent container overflow */
+  }
+
+  /* Timeline specific mobile fixes */
+  .timeline-chart.full-width {
+    padding: 4px; /* Reduced padding */
+    max-width: 100vw; /* Never exceed viewport width */
+    box-sizing: border-box; /* Include padding in width calculation */
+  }
+
+  #timelineChart {
+    max-width: 100%; /* Ensure timeline doesn't exceed container */
+    overflow-x: auto; /* Horizontal scroll for timeline content */
+    overflow-y: hidden;
+  }
+
+  /* Timeline SVG sizing is controlled at render time by the chart code.
+     Avoid CSS min-width rules here which can force page-level overflow. */
+
+  .stats-overview {
+    gap: 8px; /* Smaller gap */
+    margin-bottom: 8px; /* Less margin */
+    padding: 5px 0; /* Reduced padding */
+    flex-direction: row; /* Keep horizontal on tablet */
+    flex-wrap: wrap; /* Allow wrapping */
+  }
+
   .stat-item {
-    font-size: 0.85em;
+    font-size: 0.75em; /* Smaller font */
+    flex: 0 1 auto; /* Don't grow */
+    min-width: 0; /* Allow shrinking */
   }
 
   .controls {
@@ -631,35 +810,35 @@ select option {
     padding: 5px 10px;
   }
 
-  /* Character table mobile styles */
+  /* Character table tablet styles - more compact */
   .character-table-header {
-    grid-template-columns: 55px 30px 1fr 75px 75px; /* Adjusted for mobile */
-    gap: 4px; /* Reduced gap */
-    padding: 4px 8px; /* Reduced padding */
-    font-size: 0.7em; /* Smaller font */
+    grid-template-columns: var(--grid-char-table-tablet);
+    gap: 3px;
+    padding: 3px 6px;
+    font-size: var(--font-size-ultra);
   }
 
   .character-item {
-    grid-template-columns: 55px 30px 1fr 75px 75px; /* Match header */
-    gap: 4px; /* Reduced gap */
-    padding: 3px 8px; /* Reduced padding */
+    grid-template-columns: var(--grid-char-table-tablet);
+    gap: 3px;
+    padding: 2px 6px;
   }
 
   .character-table-date {
-    font-size: 0.7em;
+    font-size: var(--font-size-compact);
   }
 
   .character-table-level {
-    font-size: 0.7em;
+    font-size: var(--font-size-compact);
   }
 
   .character-table-name {
-    font-size: 0.8em;
+    font-size: var(--font-size-sub);
   }
 
   .character-table-location,
   .character-table-cause {
-    font-size: 0.7em;
+    font-size: var(--font-size-compact);
   }
 
   .tooltip {
@@ -668,16 +847,33 @@ select option {
   }
 }
 
+/* Mobile (480px and below) - Ultra-compact layout */
 @media (max-width: 480px) {
+  /* Prevent horizontal scrolling on mobile */
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .dashboard {
+    max-width: 100vw;
+    padding: 0 10px; /* Reduced side padding */
+    box-sizing: border-box;
+  }
   .stats-overview {
-    gap: 10px;
-    margin-bottom: 10px;
-    padding: 8px 0;
-    flex-direction: column;
+    gap: 5px; /* Very small gap */
+    margin-bottom: 5px; /* Minimal margin */
+    padding: 3px 0; /* Minimal padding */
+    flex-direction: row; /* Horizontal even on mobile */
+    flex-wrap: wrap; /* Allow wrapping to multiple lines */
+    justify-content: space-around; /* Distribute evenly */
   }
 
   .stat-item {
-    font-size: 0.8em;
+    font-size: 0.65em; /* Very small font */
+    flex: 0 1 auto; /* Don't grow, allow shrink */
+    min-width: 0; /* Allow full shrinking */
+    white-space: nowrap; /* Prevent internal wrapping */
   }
 
   .controls {
@@ -708,28 +904,28 @@ select option {
 
   /* Character table ultra-compact mobile styles */
   .character-table-header {
-    grid-template-columns: 50px 30px 1fr 70px 70px;
-    gap: 4px;
-    padding: 4px 6px;
-    font-size: 0.7em;
+    grid-template-columns: var(--grid-char-table-mobile);
+    gap: 2px;
+    padding: 2px 4px;
+    font-size: var(--font-size-micro);
   }
 
   .character-item {
-    grid-template-columns: 50px 30px 1fr 70px 70px;
-    gap: 4px;
-    padding: 3px 6px;
+    grid-template-columns: var(--grid-char-table-mobile);
+    gap: 2px;
+    padding: 2px 4px;
   }
 
   .character-table-date {
-    font-size: 0.65em;
+    font-size: var(--font-size-ultra);
   }
 
   .character-table-level {
-    font-size: 0.65em;
+    font-size: var(--font-size-ultra);
   }
 
   .character-table-name {
-    font-size: 0.75em;
+    font-size: var(--font-size-compact);
   }
 
   .character-table-location,
@@ -739,12 +935,26 @@ select option {
 
   .character-item-date,
   .character-item-level {
-    font-size: 0.7em; /* Smaller on very small screens */
+    font-size: 0.7em;
   }
 
   .character-list-back-button {
     padding: 4px 8px;
     font-size: 11px;
+  }
+
+  .master-list-container {
+    max-height: 250px; /* Even smaller on mobile */
+    width: 100%; /* Full width */
+    max-width: 100vw; /* Never exceed viewport */
+    overflow: hidden; /* Prevent container overflow */
+    box-sizing: border-box; /* Include padding in width */
+  }
+
+  #master-character-list {
+    max-height: calc(250px - 40px);
+    overflow-x: auto; /* Horizontal scroll if table is too wide */
+    overflow-y: auto; /* Vertical scroll for list */
   }
 }
 
@@ -773,11 +983,22 @@ svg {
   overflow-x: auto;
   overflow-y: hidden;
   width: 100%;
+  max-width: 100%; /* Ensure container doesn't exceed viewport */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
+/* Keep the SVG display block so it sizes reliably. The script will set
+   the SVG width attribute to the full chart width so the container can
+   scroll it horizontally; avoid CSS min-width here. */
 #timelineChart svg {
-  min-width: 800px; /* Same as MIN_TIMELINE_WIDTH */
+  display: block;
+  width: auto; /* Allow JS-controlled width */
+}
+
+/* Prevent the page body from gaining a horizontal scrollbar from the
+   timeline SVG; let the timeline container handle horizontal scrolling. */
+.dashboard {
+  overflow-x: hidden;
 }
 
 /* Chart loading and error states */
@@ -785,7 +1006,7 @@ svg {
   animation: pulse 1.5s ease-in-out infinite;
   text-align: center;
   padding: 40px;
-  color: #4ecdc4;
+  color: var(--color-primary);
   font-size: 14px;
 }
 
@@ -795,11 +1016,11 @@ svg {
 
 .chart-error {
   background: rgba(255, 107, 107, 0.1);
-  border: 1px solid #ff6b6b;
-  border-radius: 2px;
+  border: 1px solid var(--color-secondary);
+  border-radius: var(--radius-sm);
   text-align: center;
   padding: 40px;
-  color: #ff6b6b;
+  color: var(--color-secondary);
   font-size: 14px;
 }
 
@@ -816,47 +1037,5 @@ svg {
 }
 
 /* =================================
-   RESPONSIVE FLEXBOX BREAKPOINTS
+   DEBUG AND UTILITY STYLES
    ================================= */
-
-/* Large screens (1200px+) - 2 charts per row after timeline */
-@media (min-width: 1200px) {
-  .chart-container:not(.full-width) {
-    flex: 1 1 calc((100% - 8px) / 2);
-  }
-}
-
-/* Medium screens (768px - 1199px) - 2 charts per row */
-@media (min-width: 768px) and (max-width: 1199px) {
-  .dashboard-content {
-    grid-template-columns: 350px 1fr; /* Smaller master list */
-  }
-
-  .chart-container:not(.full-width) {
-    flex: 1 1 calc((100% - 8px) / 2);
-    min-width: 250px;
-  }
-}
-
-/* Small screens (below 768px) - Single column */
-@media (max-width: 767px) {
-  .dashboard-content {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-  }
-
-  .master-list-container {
-    max-height: 300px; /* Limit height on mobile */
-  }
-
-  .charts-container {
-    flex-direction: column;
-  }
-
-  .chart-container,
-  .chart-container.full-width {
-    flex: 1 1 auto;
-    width: 100%;
-    min-width: auto;
-  }
-}

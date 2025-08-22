@@ -9,7 +9,7 @@ function createTimelineChart() {
 
   const width = Math.max(containerWidth, MIN_TIMELINE_WIDTH);
 
-  // Update SVG width to accommodate the full chart width including margins
+  // Make SVG wide enough for timeline to be horizontally scrollable
   const totalSVGWidth = width + customMargins.left + customMargins.right;
   svg.attr("width", totalSVGWidth);
 

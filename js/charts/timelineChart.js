@@ -18,12 +18,12 @@ function createTimelineChart() {
   const currentDate = new Date();
   const maxDate = d3.timeMonth.ceil(currentDate); // End of current month
 
-  // Rollup daily data with names
+  // Rollup daily data with names and classes
   const dailyData = d3.rollup(
     filteredData,
     (v) => ({
       count: v.length,
-      names: v.map((dd) => dd.characterName),
+      characters: v.map((dd) => ({ name: dd.characterName, class: dd.class })),
     }),
     (d) => d3.timeDay(d.date)
   );
@@ -31,7 +31,7 @@ function createTimelineChart() {
   const dailyArray = Array.from(dailyData, ([date, info]) => ({
     date,
     count: info.count,
-    names: info.names,
+    characters: info.characters,
   })).sort((a, b) => a.date - b.date);
 
   // Rollup monthly data for secondary Y-axis
@@ -107,11 +107,16 @@ function createTimelineChart() {
     .attr("width", dailyBarWidth)
     .attr("y", (d) => y(d.count))
     .attr("height", (d) => height - y(d.count))
-    .attr("fill", "#ff6b6b")
+    .attr("fill", COLORS.secondary)
     .style("cursor", "pointer")
     .on("mouseover", (event, d) => {
       d3.select(event.currentTarget).style("opacity", 0.7);
-      const formattedNames = d.names.join("<br/>");
+      const formattedNames = d.characters
+        .map((char) => {
+          const color = classColors[char.class] || COLORS.textPrimary;
+          return `<span style="color: ${color};">${char.name}</span>`;
+        })
+        .join("<br/>");
       showTooltip(
         event,
         `<strong>${d3.timeFormat("%B %d, %Y")(d.date)}</strong><br/>
@@ -160,7 +165,7 @@ function createTimelineChart() {
     .attr("x", 0 - height / 2)
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .style("fill", "#ff6b6b")
+    .style("fill", COLORS.secondary)
     .style("font-size", "12px")
     .text("Daily Deaths");
 
@@ -171,16 +176,16 @@ function createTimelineChart() {
     .attr("x", 0 - height / 2)
     .attr("dy", "1em")
     .style("text-anchor", "middle")
-    .style("fill", "#4ecdc4")
+    .style("fill", COLORS.primary)
     .style("font-size", "12px")
     .text("Monthly Deaths");
 
   // Add WoW Classic phase indicators
   const phases = [
-    { date: new Date(2025, 0, 9), name: "Phase 2", color: "#ffffffff" },
-    { date: new Date(2025, 2, 20), name: "Phase 3", color: "#ffffffff" },
-    { date: new Date(2025, 4, 1), name: "Phase 4", color: "#ffffffff" },
-    { date: new Date(2025, 6, 10), name: "Phase 5", color: "#ffffffff" },
+    { date: new Date(2025, 0, 9), name: "Phase 2", color: COLORS.textPrimary },
+    { date: new Date(2025, 2, 20), name: "Phase 3", color: COLORS.textPrimary },
+    { date: new Date(2025, 4, 1), name: "Phase 4", color: COLORS.textPrimary },
+    { date: new Date(2025, 6, 10), name: "Phase 5", color: COLORS.textPrimary },
   ];
 
   // Only show phases that fall within our date range

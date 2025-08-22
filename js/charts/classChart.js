@@ -71,4 +71,8 @@ function createClassChart() {
         .ticks(getSmartTickCount(maxCount))
         .tickFormat(d3.format("d"))
     );
+
+  // Add reset button if filter is active
+  const classFilter = d3.select("#classFilter").node().value;
+  updateChartResetButton("classChartTitle", "classFilter", classFilter);
 }

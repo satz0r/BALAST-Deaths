@@ -10,6 +10,18 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let data = [];
 let filteredData = [];
 
+// Design System Colors (matches CSS custom properties)
+const COLORS = {
+  primary: "#4ecdc4",
+  secondary: "#ff6b6b",
+  blue: "#45b7d1",
+  backgroundStart: "#1a1a2e",
+  backgroundEnd: "#16213e",
+  textPrimary: "#ffffff",
+  textMuted: "#e6e6e6",
+  textDark: "#1a2332",
+};
+
 // Color schemes
 const classColors = {
   Warrior: "#C79C6E",
@@ -20,6 +32,7 @@ const classColors = {
   Mage: "#69CCF0",
   Warlock: "#9482C9",
   Druid: "#FF7D0A",
+  Unknown: "#adadadff",
 };
 
 const levelRangeColors = {
@@ -63,7 +76,7 @@ const locationColorCategories = {
     ],
   },
   zones: {
-    color: "#44aaff ff",
+    color: "#44aaffff", // Fixed spacing issue
     locations: [], // Regular zones use default
   },
 };

@@ -416,7 +416,7 @@ select option {
   border-radius: 0;
   padding: 0; /* Remove padding */
   height: fit-content;
-  max-height: 85vh; /* Increased from 80vh */
+  /* max-height removed - let inner container control height */
   overflow: visible; /* Allow inner container to handle scrolling */
   backdrop-filter: none;
   border: none; /* Remove border */
@@ -440,7 +440,7 @@ select option {
 }
 
 #master-character-list {
-  max-height: calc(85vh - 40px); /* Adjusted for new height */
+  /* max-height: 90vh; */
   overflow-y: auto;
 }
 
@@ -457,7 +457,7 @@ select option {
 }
 
 .character-list-scrollable {
-  max-height: 400px;
+  /* max-height: 400px; */ /* Removed - let JavaScript control height */
   overflow-y: auto;
   padding: 0; /* Remove padding for maximum space */
 }

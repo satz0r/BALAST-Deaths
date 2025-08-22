@@ -16,10 +16,10 @@ function createCharacterList(options) {
     filterType,
     filterValue,
     data,
-    borderColor = "#45b7d1",
+    borderColor = COLORS.blue,
     backButtonText = "← Back to Chart",
     getAdditionalInfo = () => "",
-    maxHeight = "400px",
+    maxHeight = "4000px",
   } = options;
 
   // Prepare character data - use the data directly as it's already properly structured
@@ -80,7 +80,7 @@ function createCharacterList(options) {
       d.level !== null && d.level !== undefined ? d.level : "?";
 
     // Get colors from config.js
-    const playerNameColor = classColors[d.class] || "#ffffff";
+    const playerNameColor = classColors[d.class] || COLORS.textPrimary;
     const levelColor = getLevelRangeColor(d.level);
     const locationDisplay = d.location || "Unknown";
     const deathCauseDisplay = d.death_cause || "Unknown";

@@ -4,18 +4,21 @@ function createLevelChart() {
   const levelData = filteredData.filter((d) => d.level);
   const ranges = [
     {
-      range: "10-20",
-      count: levelData.filter((d) => d.level >= 1 && d.level <= 20).length,
+      range: "60",
+      count: levelData.filter((d) => d.level === 60).length,
+    },
+    {
+      range: "41-59",
+      count: levelData.filter((d) => d.level >= 41 && d.level <= 59).length,
     },
     {
       range: "21-40",
       count: levelData.filter((d) => d.level >= 21 && d.level <= 40).length,
     },
     {
-      range: "41-59",
-      count: levelData.filter((d) => d.level >= 41 && d.level <= 59).length,
+      range: "10-20",
+      count: levelData.filter((d) => d.level >= 1 && d.level <= 20).length,
     },
-    { range: "60", count: levelData.filter((d) => d.level === 60).length },
   ];
 
   const x = d3
@@ -38,7 +41,7 @@ function createLevelChart() {
     .attr("width", barWidth)
     .attr("y", (d) => y(d.count))
     .attr("height", (d) => height - y(d.count))
-    .attr("fill", (d) => levelRangeColors[d.range] || "#45b7d1")
+    .attr("fill", (d) => levelRangeColors[d.range] || COLORS.blue)
     .style("cursor", "pointer")
     .on("click", (event, d) => {
       hideTooltip(); // Hide tooltip when clicking
@@ -70,4 +73,8 @@ function createLevelChart() {
         .ticks(getSmartTickCount(maxCount))
         .tickFormat(d3.format("d"))
     );
+
+  // Add reset button if filter is active
+  const levelFilter = d3.select("#levelFilter").node().value;
+  updateChartResetButton("levelChartTitle", "levelFilter", levelFilter);
 }

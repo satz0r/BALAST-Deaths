@@ -16,7 +16,7 @@ function createMasterCharacterList() {
     filterType: "", // No filter type for master list
     filterValue: "all",
     data: filteredData,
-    borderColor: "#4ecdc4",
+    borderColor: COLORS.primary,
     backButtonText: "← Clear All Filters",
     maxHeight: "calc(80vh - 100px)",
   });
